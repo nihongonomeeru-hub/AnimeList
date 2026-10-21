@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">AnimeList</string>
+    <string name="re_zero">Re:Zero</string>
+    <string name="tensura">TenSura</string>
+    <string name="attack_on_titan">Attack on Titan</string>
+    <string name="one_piece">One Piece</string>
+    <string name="naruto">Naruto</string>
+    <string name="top_anime">Top Anime\n</string>
+    <string name="popular_anime">Popular Anime</string>
+    <string name="latest_anime">Latest Anime</string>
+</resources>
