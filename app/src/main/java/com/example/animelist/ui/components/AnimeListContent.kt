@@ -1,12 +1,9 @@
-package com.example.animelist.ui.screens
+package com.example.animelist.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -18,19 +15,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.animelist.ui.element.AnimeCard
+import com.example.animelist.ui.model.AnimeItem
 import com.example.animelist.ui.model.AnimeSection
+import com.example.animelist.view_model.FavoriteViewModel
 
 @Composable
-fun AnimeScreen(
+fun AnimeListContent(
     sections: List<AnimeSection>,
+    onAnimeClick: (AnimeItem) -> Unit,
     modifier: Modifier = Modifier
     ) {
     LazyColumn (
-        modifier = modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-        ,
+        modifier = modifier,
+        contentPadding = PaddingValues(bottom = 16.dp),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(28.dp)
     ) {
@@ -60,7 +57,8 @@ fun AnimeScreen(
                         key = {animeItem -> animeItem.stringResourceId}
                     ) { animeItem ->
                         AnimeCard(
-                            animeItem = animeItem
+                            animeItem = animeItem,
+                            onAnimeClick = onAnimeClick
                         )
                     }
                 }

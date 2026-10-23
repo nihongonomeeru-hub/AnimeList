@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.example.animelist.ui.screens.HomePage
+import com.example.animelist.ui.screens.MainScreen
+import com.example.animelist.ui.screens.main_screens.HomePage
 import com.example.animelist.ui.theme.AnimeListTheme
 
 class MainActivity : ComponentActivity() {
@@ -21,7 +22,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomePage()
+                    MainScreen()
                 }
             }
         }

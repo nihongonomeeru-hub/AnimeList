@@ -9,5 +9,6 @@ enum class AnimeSectionType(
     TOP_ANIME(R.string.top_anime),
     POPULAR_ANIME(R.string.popular_anime),
     LATEST_ANIME(R.string.latest_anime),
+    RECOMMEND_ANIME(R.string.recommend_anime)
 
 }

@@ -1,4 +1,4 @@
-package com.example.animelist.ui.element
+package com.example.animelist.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
