@@ -7,6 +7,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.animelist.ui.navigation.BottomNavItem
 
@@ -18,8 +19,7 @@ fun AppBottomBar(
     val items = listOf(
         BottomNavItem.Home,
         BottomNavItem.Search,
-        BottomNavItem.Favorites,
-        BottomNavItem.Profile
+        BottomNavItem.Favorites
     )
 
     NavigationBar(
@@ -34,10 +34,10 @@ fun AppBottomBar(
                 icon = {
                     Icon(
                         imageVector = item.icon,
-                        contentDescription = item.title
+                        contentDescription = stringResource(item.title)
                     )
                 },
-                label = { Text(text = item.title) },
+                label = { Text(stringResource(item.title)) },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = Color.White,
                     selectedTextColor = Color.White,

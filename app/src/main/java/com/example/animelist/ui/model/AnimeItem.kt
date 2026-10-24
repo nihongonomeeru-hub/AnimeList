@@ -1,14 +1,12 @@
 package com.example.animelist.ui.model
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-
 data class AnimeItem(
     val id: Int,
-    @StringRes val stringResourceId: Int,
-    @DrawableRes val imageResourceId: Int,
+    val stringResourceId: String,
+    val imageResourceId: String,
     val rating: Double? = null,
-    val description: String?,
+    val description: String,
     val genres: List<String>,
-    val episodes: Int?
+    val episodes: Int?,
+    val year: Int?
 )

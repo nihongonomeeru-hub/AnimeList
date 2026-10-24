@@ -1,10 +1,5 @@
 <resources>
     <string name="app_name" translatable="false">AnimeList</string>
-    <string name="re_zero" translatable="false">Re:Zero</string>
-    <string name="tensura" translatable="false">TenSura</string>
-    <string name="attack_on_titan" translatable="false">Attack on Titan</string>
-    <string name="one_piece" translatable="false">One Piece</string>
-    <string name="naruto" translatable="false">Naruto</string>
 
     <string name="top_anime">トップ</string>
     <string name="popular_anime">人気アニメ</string>
@@ -12,4 +7,13 @@
     <string name="recommend_anime">この作品がおすすめ</string>
     <string name="back">Back</string>
     <string name="to_mylist">To MyList</string>
+    <string name="details">詳細情報</string>
+    <string name="my_list">マイリスト</string>
+    <string name="no_my_list">マイリストに登録された作品はありません</string>
+    <string name="next">Next</string>
+    <string name="delete">Delete</string>
+    <string name="search">検索</string>
+    <string name="home">ホーム</string>
+    <string name="my_page">マイページ</string>
+    <string name="all">全シリーズ</string>
 </resources>

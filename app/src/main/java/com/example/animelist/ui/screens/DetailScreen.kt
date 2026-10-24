@@ -1,6 +1,5 @@
 package com.example.animelist.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,16 +28,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.animelist.R
 import com.example.animelist.ui.model.AnimeItem
 import com.example.animelist.view_model.FavoriteViewModel
@@ -63,12 +64,26 @@ fun DetailScreen(
                 .fillMaxWidth()
                 .aspectRatio(3f / 4f)
         ) {
-            Image(
-                painter = painterResource(animeItem.imageResourceId),
-                contentDescription = stringResource(animeItem.stringResourceId),
+
+            AsyncImage(
+                model = animeItem.imageResourceId,
+                contentDescription = animeItem.stringResourceId,
                 contentScale = ContentScale.Crop,
                 alignment = Alignment.TopCenter,
                 modifier = Modifier.fillMaxSize()
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .height(100.dp)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0x99000000),
+                                Color.Transparent
+                            )
+                        )
+                    )
             )
 
             Box(
@@ -114,7 +129,8 @@ fun DetailScreen(
                     modifier = Modifier.size(40.dp)
                 ) {
 
-                    val isFavorite = viewModel.isFavorite(animeItem)
+                    val isFavorite by viewModel.isFavorite(animeItem)
+                        .collectAsState(initial = false)
 
                     IconButton(
                         onClick = {
@@ -137,7 +153,7 @@ fun DetailScreen(
                 .padding(horizontal = 16.dp)
         ) {
             Text(
-                text = stringResource(animeItem.stringResourceId),
+                text = animeItem.stringResourceId,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -173,13 +189,18 @@ fun DetailScreen(
                     }
                 }
 
+                val episodesText = when {
+                    animeItem.episodes != null -> "${animeItem.episodes}話" // Например: "24話"
+                    else -> "放送中" // Или "未定" (если количество серий ещё не определено)
+                }
+
                 Text(
-                    text = "全24話",
+                    text = episodesText,
                     color = Color.Gray,
                     fontSize = 13.sp
                 )
                 Text(
-                    text = "2024年",
+                    text = animeItem.year.toString(),
                     color = Color.Gray,
                     fontSize = 13.sp
                 )
@@ -198,7 +219,7 @@ fun DetailScreen(
 
             // 3. Текст синопсиса
             Text(
-                text = "コンビニからの帰り道、突如として異世界へと召喚されてしまった少年・菜月昴。無力な彼が手にした唯一の力は、死して時間を巻き戻す《死に戻り》の力だった。大切な人たちを守るため、過酷な運命に立ち向かっていく。",
+                text = animeItem.description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color(0xFFCCCCCC),
                 lineHeight = 22.sp
@@ -211,7 +232,7 @@ fun DetailScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    val genres = listOf("異世界", "ファンタジー", "ドラマ")
+                    val genres = animeItem.genres
                     genres.forEach { genre ->
                         Surface(
                             color = Color(0xFF1E1E1E),
