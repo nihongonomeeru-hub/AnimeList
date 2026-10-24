@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.animelist.ui.components.AnimeListContent
 import com.example.animelist.ui.components.HeroBanner
 import com.example.animelist.view_model.HomePageViewModel
@@ -22,8 +23,8 @@ import com.example.animelist.view_model.HomeUIState
 
 @Composable
 fun HomePage(
-    viewModel: HomePageViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: HomePageViewModel = viewModel(),
 ) {
     when(val state = viewModel.uiState) {
         is HomeUIState.Loading -> {
@@ -74,6 +75,3 @@ fun HomePage(
         }
     }
 }
-
-
-

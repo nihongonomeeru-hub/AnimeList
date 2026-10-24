@@ -24,10 +24,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,18 +37,19 @@ import androidx.compose.ui.unit.sp
 import com.example.animelist.R
 import com.example.animelist.ui.components.AnimeGridContent
 import com.example.animelist.ui.model.AnimeItem
-import com.example.animelist.view_model.HomePageViewModel
 
 @Composable
 fun SearchScreen(
     animeList: List<AnimeItem>,
+    searchText: String,
+    onSearchTextChange: (String) -> Unit,
+    clearQuery: () -> Unit,
     onAnimeClick: (AnimeItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var searchText by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
 
-    val filteredList = remember(searchText, animeList) {
+    val filteredList = rememberSaveable (searchText, animeList) {
         val query = searchText.trim()
         if (query.isEmpty()) {
             animeList
@@ -81,7 +79,7 @@ fun SearchScreen(
 
         OutlinedTextField(
             value = searchText,
-            onValueChange = { searchText = it },
+            onValueChange = onSearchTextChange,
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
                 Text(
@@ -99,7 +97,7 @@ fun SearchScreen(
             },
             trailingIcon = {
                 if (searchText.isNotEmpty()) {
-                    IconButton(onClick = { searchText = "" }) {
+                    IconButton(onClick = clearQuery) {
                         Icon(
                             imageVector = Icons.Default.Clear,
                             contentDescription = "Clear",
@@ -161,7 +159,7 @@ fun SearchScreen(
                     fontWeight = FontWeight.Bold
                 )
                 AnimeGridContent(
-                    animeList = animeList,
+                    animeList = filteredList,
                     onAnimeClick = onAnimeClick
                 )
             }

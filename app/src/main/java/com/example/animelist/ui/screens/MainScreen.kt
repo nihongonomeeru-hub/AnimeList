@@ -34,15 +34,15 @@ import com.example.animelist.ui.navigation.BottomNavItem
 import com.example.animelist.ui.screens.main_screens.FavoritesScreen
 import com.example.animelist.ui.screens.main_screens.HomePage
 import com.example.animelist.ui.screens.main_screens.SearchScreen
-import com.example.animelist.view_model.FavoriteViewModel
 import com.example.animelist.view_model.HomePageViewModel
 import androidx.compose.runtime.rememberCoroutineScope
 import com.example.animelist.ui.components.SectionDetail
+import com.example.animelist.view_model.SearchViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
-    favoriteViewModel: FavoriteViewModel = viewModel(),
+    searchViewModel: SearchViewModel = viewModel(),
     viewModel: HomePageViewModel = viewModel()
 ) {
     val context = LocalContext.current
@@ -106,9 +106,7 @@ fun MainScreen(
             ) {
                 when (currentRoute) {
                     BottomNavItem.Home.route -> {
-                        HomePage(
-                            viewModel = viewModel
-                        )
+                        HomePage(viewModel = viewModel)
                         androidx.compose.animation.AnimatedVisibility(
                             visible = selectedSection != null,
                             enter = androidx.compose.animation.slideInHorizontally(
@@ -132,12 +130,13 @@ fun MainScreen(
 
                     BottomNavItem.Search.route -> SearchScreen(
                         animeList = viewModel.animeList,
-                        onAnimeClick = { anime -> viewModel.selectedAnime(anime) }
+                        onAnimeClick = { anime -> viewModel.selectedAnime(anime) },
+                        searchText = searchViewModel.searchQuery,
+                        onSearchTextChange = { searchViewModel.updateQuery(it) },
+                        clearQuery = { searchViewModel.clearQuery() }
                     )
                     BottomNavItem.Favorites.route -> FavoritesScreen(
-                        favViewModel = favoriteViewModel,
-                        onAnimeClick = { anime -> viewModel.selectedAnime(anime) },
-                        viewModel = viewModel
+                        onAnimeClick = { anime -> viewModel.selectedAnime(anime) }
                     )
                 }
 
@@ -188,8 +187,7 @@ fun MainScreen(
                     if (anime != null) {
                         DetailScreen(
                             animeItem = anime,
-                            onBackClick = { viewModel.clearSelection() }, // или viewModel.selectedAnime(null)
-                            viewModel = favoriteViewModel
+                            onBackClick = { viewModel.clearSelection() }
                         )
                     }
                 }

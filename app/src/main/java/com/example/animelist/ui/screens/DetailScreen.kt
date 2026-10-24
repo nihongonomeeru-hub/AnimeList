@@ -28,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +38,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.animelist.R
 import com.example.animelist.ui.model.AnimeItem
@@ -49,13 +50,12 @@ fun DetailScreen(
     modifier: Modifier = Modifier,
     animeItem: AnimeItem,
     onBackClick: () -> Unit,
-    viewModel: FavoriteViewModel,
+    viewModel: FavoriteViewModel = viewModel(),
 ) {
     val scrollState = rememberScrollState()
 
     Column(
         modifier = modifier
-            .fillMaxSize()
             .background(Color(0xFF0F0F0F))
             .verticalScroll(scrollState)
     ) {
@@ -130,7 +130,7 @@ fun DetailScreen(
                 ) {
 
                     val isFavorite by viewModel.isFavorite(animeItem)
-                        .collectAsState(initial = false)
+                        .collectAsStateWithLifecycle(initialValue = false)
 
                     IconButton(
                         onClick = {
@@ -190,8 +190,8 @@ fun DetailScreen(
                 }
 
                 val episodesText = when {
-                    animeItem.episodes != null -> "${animeItem.episodes}話" // Например: "24話"
-                    else -> "放送中" // Или "未定" (если количество серий ещё не определено)
+                    animeItem.episodes != null -> "${animeItem.episodes}話"
+                    else -> "放送中"
                 }
 
                 Text(
@@ -217,7 +217,6 @@ fun DetailScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 3. Текст синопсиса
             Text(
                 text = animeItem.description,
                 style = MaterialTheme.typography.bodyMedium,

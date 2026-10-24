@@ -24,7 +24,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,20 +34,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.animelist.R
 import com.example.animelist.ui.components.AnimeCard
 import com.example.animelist.ui.model.AnimeItem
 import com.example.animelist.view_model.FavoriteViewModel
-import com.example.animelist.view_model.HomePageViewModel
 
 @Composable
 fun FavoritesScreen(
-    favViewModel: FavoriteViewModel,
-    viewModel: HomePageViewModel,
-    onAnimeClick: (AnimeItem) -> Unit,
-    modifier: Modifier= Modifier
+    modifier: Modifier= Modifier,
+    favViewModel: FavoriteViewModel = viewModel(),
+    onAnimeClick: (AnimeItem) -> Unit
 ) {
-    val favorites by favViewModel.favorites.collectAsState()
+    val favorites by favViewModel.favorites.collectAsStateWithLifecycle()
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -64,59 +63,12 @@ fun FavoritesScreen(
             modifier = Modifier.padding(vertical = 16.dp)
         )
 
-        if(favorites.isEmpty()) {
-            EmptyFavoritesPlaceholder()
-        } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = modifier.fillMaxSize()
-            ) {
-                items(
-                    items = favorites,
-                    key = {anime -> anime.id}
-                ) { anime ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                            .clickable { onAnimeClick(anime) },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .width(80.dp)
-                                .height(115.dp)
-                        ) {
-                            AnimeCard(
-                                animeItem = anime,
-                                onAnimeClick = onAnimeClick,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Text(
-                                text = anime.stringResourceId,
-                                color = Color.White,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Medium,
-                                textAlign = TextAlign.Start,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(1f)
-                            )
-                            IconButton(
-                                onClick = { favViewModel.toggleFavorite(anime) }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = stringResource(R.string.delete),
-                                    tint = Color.LightGray
-                                )
-                            }
-                    }
-                }
-            }
-        }
+        FavoritesContent(
+            favorites = favorites,
+            onAnimeClick = onAnimeClick,
+            onRemoveFavorite = { animeId -> favViewModel.toggleFavorite(animeId) },
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
 
@@ -140,6 +92,81 @@ private fun EmptyFavoritesPlaceholder() {
                 text = stringResource(R.string.no_my_list),
                 color = Color.Gray,
                 fontSize = 14.sp
+            )
+        }
+    }
+}
+
+@Composable
+fun FavoritesContent(
+    favorites: List<AnimeItem>,
+    onAnimeClick: (AnimeItem) -> Unit,
+    onRemoveFavorite: (AnimeItem) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    if(favorites.isEmpty()) {
+        EmptyFavoritesPlaceholder()
+    } else {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = modifier.fillMaxSize()
+        ) {
+            items(
+                items = favorites,
+                key = {anime -> anime.id}
+            ) { anime ->
+                FavoriteList(
+                    anime = anime,
+                    onAnimeClick = onAnimeClick,
+                    onRemoveFavorite = onRemoveFavorite
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun FavoriteList(
+    onAnimeClick: (AnimeItem) -> Unit,
+    onRemoveFavorite: (AnimeItem) -> Unit,
+    anime: AnimeItem
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .clickable { onAnimeClick(anime) },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .width(80.dp)
+                .height(115.dp)
+        ) {
+            AnimeCard(
+                animeItem = anime,
+                onAnimeClick = onAnimeClick,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = anime.stringResourceId,
+            color = Color.White,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Start,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
+        )
+        IconButton(
+            onClick = { onRemoveFavorite(anime) }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = stringResource(R.string.delete),
+                tint = Color.LightGray
             )
         }
     }
