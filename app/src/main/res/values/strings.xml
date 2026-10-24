@@ -12,4 +12,9 @@
     <string name="recommend_anime">この作品がおすすめ</string>
     <string name="back">Back</string>
     <string name="to_mylist">To MyList</string>
+    <string name="details">詳細情報</string>
+    <string name="my_list">マイリスト</string>
+    <string name="no_my_list">マイリストに登録された作品はありません</string>
+    <string name="next">Next</string>
+    <string name="delete">Delete</string>
 </resources>

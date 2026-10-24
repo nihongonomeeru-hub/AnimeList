@@ -63,12 +63,26 @@ fun DetailScreen(
                 .fillMaxWidth()
                 .aspectRatio(3f / 4f)
         ) {
+
             Image(
                 painter = painterResource(animeItem.imageResourceId),
                 contentDescription = stringResource(animeItem.stringResourceId),
                 contentScale = ContentScale.Crop,
                 alignment = Alignment.TopCenter,
                 modifier = Modifier.fillMaxSize()
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .height(100.dp)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0x99000000),
+                                Color.Transparent
+                            )
+                        )
+                    )
             )
 
             Box(

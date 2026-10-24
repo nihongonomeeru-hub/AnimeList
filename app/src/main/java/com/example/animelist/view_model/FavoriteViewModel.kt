@@ -7,6 +7,7 @@ import com.example.animelist.ui.model.AnimeItem
 class FavoriteViewModel: ViewModel() {
     val favoriteAnime = mutableStateListOf<AnimeItem>()
 
+
     fun toggleFavorite(animeItem: AnimeItem) {
         val existingIndex = favoriteAnime.indexOfFirst{it.id == animeItem.id}
         if(existingIndex != -1) {
@@ -18,5 +19,12 @@ class FavoriteViewModel: ViewModel() {
 
     fun isFavorite(animeItem: AnimeItem): Boolean {
         return favoriteAnime.any{it.id == animeItem.id}
+    }
+
+    fun removeFavorite(animeItem: AnimeItem) {
+        val existingIndex = favoriteAnime.indexOfFirst{it.id == animeItem.id}
+        if(existingIndex != -1) {
+            favoriteAnime.removeAt(existingIndex)
+        }
     }
 }
