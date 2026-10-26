@@ -1,35 +1,59 @@
-# AnimeList
+# AnimeList (アニメリストアプリ)
 
-Jetpack ComposeとMaterial 3で構築された、モダンなアニメ情報閲覧Androidアプリです。
+> Jetpack ComposeとモダンAndroidアーキテクチャ（MVVM / UDF）を採用した、アニメ作品の閲覧・検索・お気に入り管理を行うAndroidアプリケーションです。
 
-## 技術スタック
-* **UI:** Jetpack Compose (Material 3)
-* **言語:** Kotlin
-* **アーキテクチャ:** コンポーネント指向モジュール設計
-* **テーマ:** システムライト＆ダークモード対応
+---
 
-## 実装状況
-- [x] 2:3のアスペクト比を持つカスタム`AnimeCard`コンポーネント
-- [x] 横スクロールカルーセル（`LazyColumn`内の`LazyRow`）によるホーム画面
-- [ ] アニメ詳細画面
-- [ ] 画面遷移ナビゲーション
+## 📱 Screenshots (スクリーンショット)
 
+---
 
-<--------------------------------------------------------------------->
+## 🌟 Key Features (主な機能)
 
+* **ホーム画面 (Home)**:
+    * 注目の作品（Hero Banner）およびカテゴリー別セクション一覧のカルーセル表示
+    * セクション詳細画面へのスムーズなスライド遷移（`AnimatedVisibility`）
+    * ボトムナビゲーション再タップ時のトップ自動スクロール（`animateScrollToItem`）
+* **インタラクティブな詳細画面 (Shared Element / Zoom Effect)**:
+    * ポスターカードの位置に合わせた滑らかな拡大・縮小トランジション（`AnimatedContent`）
+    * 作品情報（あらすじ、エピソード数、ジャンルタグ、評価スター）の確認
+* **リアルタイム検索 (Search)**:
+    * 検索キーワードに応じたインクリメンタルフィルタリング
+    * 画面遷移や画面回転時にも検索状態を保持する状態管理（`SearchViewModel`）
+* **マイリスト管理 (Favorites)**:
+    * ワンタップでお気に入り追加・削除（ローカルストレージ / Room連携）
+    * リストが空の場合のプレースホルダー表示
+* **UX最適化**:
+    * 誤終了防止のための「戻る」ボタン2度押し検知とトースト通知
 
-# AnimeList
+---
 
-A modern Android application for discovering and tracking anime titles, built with Jetpack Compose and Material 3.
+## 🛠 Tech Stack & Architecture (技術スタック・設計)
 
-## Tech Stack
-* **UI:** Jetpack Compose (Material 3)
-* **Language:** Kotlin
-* **Architecture:** Modular Component Pattern
-* **Theme:** Dynamic Light and Dark Mode support
+### Architecture
+* **MVVM (Model-View-ViewModel)**
+* **UDF (Unidirectional Data Flow)** による予測可能でクリーンな状態管理
+* **Stateful / Stateless の分離**: UIコンポーネント（Content）をViewModelから疎結合にし、プレビュー・テスト容易性を確保
 
-## Features & Progress
-- [x] Custom `AnimeCard` component with a 2:3 aspect ratio
-- [x] Dashboard with horizontal carousel (`LazyRow` inside `LazyColumn`)
-- [ ] Detail screen with expanded anime information
-- [ ] In-app navigation
+### Libraries & Tools
+* **Language**: Kotlin 100%
+* **UI**: Jetpack Compose, Material 3
+* **Asynchronous**: Kotlin Coroutines & StateFlow
+* **Lifecycle**: `collectAsStateWithLifecycle`
+* **Local Storage**: Room Database / SQLite
+* **Image Loading**: Coil (AsyncImage)
+* **Animation**: Compose Animation (`AnimatedContent`, `AnimatedVisibility`)
+
+---
+
+## 📂 Project Structure (パッケージ構成)
+
+```text
+com.example.animelist/
+├── data/              # Room Entity, DAO, Repository
+├── model/             # UI用データクラス (AnimeItem, Section など)
+├── view_model/        # 各画面のViewModel (HomePageViewModel, SearchViewModel, FavoriteViewModel)
+└── ui/
+    ├── components/    # 共通UIコンポーネント (AnimeCard, HeroBanner, AppBottomBar)
+    ├── navigation/    # ナビゲーション定義 (BottomNavItem)
+    └── screens/       # 各画面 (MainScreen, DetailScreen, main_screens/*)
