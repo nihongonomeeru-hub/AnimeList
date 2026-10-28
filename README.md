@@ -6,6 +6,15 @@
 
 ## 📱 Screenshots (スクリーンショット)
 
+| Home | Detail | My List |
+| :---: | :---: | :---: |
+| ![Home Screen](art/home_page.png) | ![Detail Screen](art/detail_page.png) | ![My List Page](art/my_list.png) |
+
+| Details Added | Search | Search Result |
+| :---: | :---: | :---: |
+| ![Anime Details](art/my_list_added_anime.png) | ![Search Page](art/search_page.png) | ![Search Result](art/search_result.png) |
+
+
 ---
 
 ## 🌟 Key Features (主な機能)
