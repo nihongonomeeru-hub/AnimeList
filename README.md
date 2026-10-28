@@ -42,7 +42,47 @@
   * リストが空の場合のプレースホルダー表示
 * **UX最適化:**
   * 誤終了防止のための「戻る」ボタン2度押し検知とトースト通知
-* ---
+---
+
+---
+
+## 🏗️ Tech Stack & Architecture (技術スタック・設計)
+
+### Architecture
+* **MVVM (Model-View-ViewModel)**
+* **UDF (Unidirectional Data Flow)** による予測可能でクリーンな状態管理
+* **Stateful / Stateless の分離:** UIコンポーネントをViewModelから疎結合にし、プレビュー・テスト容易性を確保
+* **Repository Pattern:** データソース（Kitsu API / Room DB）の抽象化とカプセル化
+
+### Libraries & Tools
+* **Language:** Kotlin 100%
+* **UI:** Jetpack Compose, Material 3
+* **Asynchronous:** Kotlin Coroutines & StateFlow
+* **Lifecycle:** `collectAsStateWithLifecycle`
+* **Local Storage:** Room Database / SQLite
+* **Image Loading:** Coil (`AsyncImage`)
+* **Animation:** Compose Animation (`AnimatedContent`, `AnimatedVisibility`)
+* **Networking:** Retrofit2, OkHttp3
+
+---
+
+## 📁 Project Structure (パッケージ構成)
+
+```text
+com.example.animelist/
+├── data/
+│   ├── local/      # Room Database, DAO, Entity (マイリスト永続化)
+│   └── network/    # Kitsu API 通信層 (Retrofit, DTO)
+├── view_model/     # 各画面の状態管理 (HomePageViewModel, SearchViewModel, FavoriteViewModel)
+└── ui/
+    ├── components/ # 共通UIコンポーネント (AnimeCard, HeroBanner, AppBottomBar など)
+    ├── model/      # UI用データモデル (AnimeItem, AnimeSection)
+    ├── navigation/ # 画面遷移・ルート定義 (BottomNavItem)
+    ├── screens/    # 各画面 (MainScreen, DetailScreen, main_screens/*)
+    └── theme/      # カラーパレット、タイポグラフィ、MaterialTheme
+```
+
+---
 
 ## 🛠️ Getting Started (ビルド・実行手順)
 
@@ -61,7 +101,8 @@
 1. **リポジトリのクローン:**
    ```bash
    git clone [https://github.com/nihongonomeeru-hub/AnimeList.git](https://github.com/nihongonomeeru-hub/AnimeList.git)
-   
+   cd AnimeList
+   ```
 
 プロジェクトのインポート:
 
