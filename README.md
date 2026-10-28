@@ -42,3 +42,39 @@
   * リストが空の場合のプレースホルダー表示
 * **UX最適化:**
   * 誤終了防止のための「戻る」ボタン2度押し検知とトースト通知
+* ---
+
+## 🛠️ Getting Started (ビルド・実行手順)
+
+本プロジェクトをローカル環境でビルドおよび実行するための手順です。
+
+### 動作要件 (Prerequisites)
+* **Android Studio:** Quail (2026.1.4) 以降推奨
+* **JDK:** 17 以上 (推奨: 21 / 25)
+* **Android SDK:**
+  * `compileSdk`: 35
+  * `minSdk`: 26 (Android 8.0 Oreo 以上)
+  * `targetSdk`: 35
+
+### セットアップ手順 (Setup & Run)
+
+1. **リポジトリのクローン:**
+   ```bash
+   git clone [https://github.com/nihongonomeeru-hub/AnimeList.git](https://github.com/nihongonomeeru-hub/AnimeList.git)
+   
+
+プロジェクトのインポート:
+
+Android Studio を起動し、Open からクローンした AnimeList ディレクトリを選択します。
+
+Gradle の同期（Sync Project with Gradle Files）が完了するまで待機します。
+
+ビルドおよび実行:
+
+実行先として実機（USBデバッグ有効化済み）または Android Emulator（API 26以上）を選択します。
+
+Run 'app'（またはショートカット Ctrl + R / Shift + F10）を実行してアプリを起動します。
+
+💡 補足事項 (APIについて):
+
+アニメデータ取得には公開の Kitsu API を使用しているため、個別の API キー設定は不要です。プロジェクトをクローン後、そのままビルドして即座に動作確認が可能です。
