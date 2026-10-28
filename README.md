@@ -14,12 +14,12 @@
 |:---------------------------------------------:|:-----------------------------------:|:---------------------------------------:|
 | ![Anime Details](art/my_list_added_anime.png) | ![Search Page](art/search_page.png) | ![Search Result](art/search_result.png) |
 
-|          App Gif          |                App Gif                |
-|:-------------------------:|:-------------------------------------:|
-| ![App Vieo](art/app1.gif) |       ![App Vieo](art/app2.gif)       |
-|          App Gif          |                App Gif                |
-|           :---:           |                 :---:                 |
-| ![App Vieo](art/app3.gif) |       ![App Vieo](art/app4.gif)       |
+### 🎬 Feature Demos (機能デモ)
+
+| Home & Transitions | Category Browsing | Instant Search | Favorites (Room DB) |
+| :---: | :---: | :---: | :---: |
+| ![Home Demo](art/app1.gif) | ![Category Demo](art/app2.gif) | ![Search Demo](art/app3.gif) | ![Favorites Demo](art/app4.gif) |
+| **ホーム・バナー遷移** | **カテゴリー一覧** | **インクリメンタル検索** | **マイリスト・DB永続化** |
 
 ---
 
