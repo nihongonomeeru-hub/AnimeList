@@ -6,26 +6,20 @@
 
 ## 📱 Screenshots (スクリーンショット)
 
-| Home | Detail | My List |
-| :---: | :---: | :---: |
+|               Home                |                Detail                 |             My List              |
+|:---------------------------------:|:-------------------------------------:|:--------------------------------:|
 | ![Home Screen](art/home_page.png) | ![Detail Screen](art/detail_page.png) | ![My List Page](art/my_list.png) |
 
-| Details Added | Search | Search Result |
-| :---: | :---: | :---: |
+|                 Details Added                 |               Search                |              Search Result              |
+|:---------------------------------------------:|:-----------------------------------:|:---------------------------------------:|
 | ![Anime Details](art/my_list_added_anime.png) | ![Search Page](art/search_page.png) | ![Search Result](art/search_result.png) |
 
-|           App Gif           |
-|:---------------------------:|
-|  ![App Vieo](art/app1.gif)  |
-|           App Gif           |
-| :-------------------------: |
-|  ![App Vieo](art/app2.gif)  |
-|     App Gif                 |
-| :-------------------------: |
-|  ![App Vieo](art/app3.gif)  |
-|           App Gif           |
-| :-------------------------: |
-|  ![App Vieo](art/app4.gif)  |
+|          App Gif          |                App Gif                |
+|:-------------------------:|:-------------------------------------:|
+| ![App Vieo](art/app1.gif) |       ![App Vieo](art/app2.gif)       |
+|          App Gif          |                App Gif                |
+|           :---:           |                 :---:                 |
+| ![App Vieo](art/app3.gif) |       ![App Vieo](art/app4.gif)       |
 
 ---
 
