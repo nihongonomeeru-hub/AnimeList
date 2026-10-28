@@ -100,7 +100,7 @@ com.example.animelist/
 
 1. **リポジトリのクローン:**
    ```bash
-   git clone [https://github.com/nihongonomeeru-hub/AnimeList.git](https://github.com/nihongonomeeru-hub/AnimeList.git)
+   git clone https://github.com/nihongonomeeru-hub/AnimeList.git
    cd AnimeList
    ```
 
