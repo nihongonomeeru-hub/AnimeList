@@ -1,7 +1,6 @@
 package com.example.animelist.view_model
 
 import android.app.Application
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.animelist.data.local.AppDatabase
