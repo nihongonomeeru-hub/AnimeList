@@ -12,7 +12,7 @@ data class AnimeEntity(
     val imageUrl: String,
     val rating: Double?,
     val description: String?,
-    val genres: List<String>,
+    val genres: List<String>?,
     val episodes: Int?,
     val year: Int?
 )

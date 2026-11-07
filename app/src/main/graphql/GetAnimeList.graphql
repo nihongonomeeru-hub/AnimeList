@@ -1,0 +1,67 @@
+query GetAnimeList($year: Int) {
+    popular: Page(page: 1, perPage: 50) {
+        media(type: ANIME, sort: POPULARITY_DESC) {
+            ...AnimeCardFields
+        }
+    }
+    topRated: Page(page: 1, perPage: 50) {
+        media(type: ANIME, sort: SCORE_DESC) {
+            ...AnimeCardFields
+        }
+    }
+    this_year: Page(page: 1, perPage: 50) {
+        media(type: ANIME, seasonYear: $year, sort: POPULARITY_DESC) {
+            ...AnimeCardFields
+        }
+    }
+    airing: Page(page: 1, perPage: 50) {
+        media(type: ANIME, status: RELEASING, sort: POPULARITY_DESC) {
+            ...AnimeCardFields
+        }
+    }
+    season: Page(page: 1, perPage: 50) {
+        media(type: ANIME, seasonYear: $year,
+            season: FALL, sort: POPULARITY_DESC) {
+            ...AnimeCardFields
+        }
+    }
+    recommendations: Page(page: 1, perPage: 50) {
+        media(type: ANIME, sort: TRENDING_DESC) {
+            ...AnimeCardFields
+        }
+    }
+    action: Page(page: 1, perPage: 50) {
+        media(type: ANIME, genre: "Action", sort: POPULARITY_DESC) {
+            ...AnimeCardFields
+        }
+    }
+    comedy: Page(page: 1, perPage: 50) {
+        media(type: ANIME, genre: "Comedy", sort: POPULARITY_DESC) {
+            ...AnimeCardFields
+        }
+    }
+
+}
+
+
+fragment AnimeCardFields on Media {
+    id
+    title {
+        romaji
+        english
+        native
+    }
+    coverImage {
+        extraLarge
+        large
+        medium
+    }
+    bannerImage
+    description(asHtml: false)
+    weightedScore
+    episodes
+    status
+    genres
+    seasonYear
+    favourites
+}
