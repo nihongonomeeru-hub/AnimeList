@@ -56,6 +56,7 @@ fun DetailScreen(
 
     Column(
         modifier = modifier
+            .fillMaxSize()
             .background(Color(0xFF0F0F0F))
             .verticalScroll(scrollState)
     ) {
@@ -199,8 +200,10 @@ fun DetailScreen(
                     color = Color.Gray,
                     fontSize = 13.sp
                 )
+
+                val yearText = if (animeItem.year != null) animeItem.year.toString()  else "—"
                 Text(
-                    text = animeItem.year.toString(),
+                    text =  yearText ,
                     color = Color.Gray,
                     fontSize = 13.sp
                 )
@@ -217,8 +220,11 @@ fun DetailScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            val cleanDescription = animeItem.description
+                .replace(Regex("<.*?>"), " ")
+
             Text(
-                text = animeItem.description,
+                text = cleanDescription,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color(0xFFCCCCCC),
                 lineHeight = 22.sp
@@ -226,13 +232,13 @@ fun DetailScreen(
 
             Spacer(modifier = Modifier.height(48.dp))
 
-            Column() {
+            Column {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     val genres = animeItem.genres
-                    genres.forEach { genre ->
+                    genres?.forEach { genre ->
                         Surface(
                             color = Color(0xFF1E1E1E),
                             shape = RoundedCornerShape(16.dp)
@@ -247,7 +253,7 @@ fun DetailScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }

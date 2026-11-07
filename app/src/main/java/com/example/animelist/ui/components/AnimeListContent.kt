@@ -51,7 +51,8 @@ fun AnimeListContent(
             }
         }
         items(
-            items = sections
+            items = sections,
+            key = {section -> section.id}
         ) { section ->
             Column {
                 Row(
@@ -89,7 +90,8 @@ fun AnimeListContent(
                 ) {
                     val previewItems = section.items.take(8)
                     items(
-                        items = previewItems
+                        items = previewItems,
+                         key = {anime -> anime.id}
                     ) { animeItem ->
                         AnimeCard(
                             animeItem = animeItem,

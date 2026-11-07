@@ -34,7 +34,7 @@ import com.example.animelist.ui.model.AnimeItem
 
 @Composable
 fun HeroBanner(
-    featuredAnime: AnimeItem,
+    animeOfDay: AnimeItem?,
     onDetailsClick: (AnimeItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -44,7 +44,7 @@ fun HeroBanner(
             .height(510.dp)
     ) {
         AsyncImage(
-            model = featuredAnime.imageResourceId,
+            model = animeOfDay?.imageResourceId,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
@@ -85,16 +85,18 @@ fun HeroBanner(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = featuredAnime.stringResourceId,
+                text = animeOfDay?.stringResourceId.orEmpty(),
                 color = Color.White,
                 fontSize = 26.sp,
                 fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.padding(bottom = 14.dp)
             )
-
-
                 OutlinedButton(
-                    onClick = { onDetailsClick(featuredAnime) },
+                    onClick = {
+                        if (animeOfDay != null) {
+                            onDetailsClick(animeOfDay)
+                        }
+                    },
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
                     modifier = Modifier

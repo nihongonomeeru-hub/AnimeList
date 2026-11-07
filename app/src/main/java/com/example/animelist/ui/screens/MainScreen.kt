@@ -88,6 +88,8 @@ fun MainScreen(
                                             viewModel.listState.animateScrollToItem(0)
                                         }
                                     }
+                                } else if(item.route == BottomNavItem.Search.route) {
+                                    searchViewModel.clearQuery()
                                 }
                             } else {
                                 currentRoute = item.route
@@ -129,11 +131,7 @@ fun MainScreen(
                     }
 
                     BottomNavItem.Search.route -> SearchScreen(
-                        animeList = viewModel.animeList,
-                        onAnimeClick = { anime -> viewModel.selectedAnime(anime) },
-                        searchText = searchViewModel.searchQuery,
-                        onSearchTextChange = { searchViewModel.updateQuery(it) },
-                        clearQuery = { searchViewModel.clearQuery() }
+                        onAnimeClick = { anime -> viewModel.selectedAnime(anime) }
                     )
                     BottomNavItem.Favorites.route -> FavoritesScreen(
                         onAnimeClick = { anime -> viewModel.selectedAnime(anime) }

@@ -11,12 +11,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +27,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,32 +38,38 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.animelist.R
 import com.example.animelist.ui.components.AnimeGridContent
 import com.example.animelist.ui.model.AnimeItem
+import com.example.animelist.view_model.SearchViewModel
+import com.example.animelist.view_model.uiState.SearchUIState
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+
+private val GENRE_LIST = listOf(
+    "アクション" to "Action",
+    "コメディ" to "Comedy",
+    "ドラマ" to "Drama",
+    "ファンタジー" to "Fantasy",
+    "日常" to "Slice of Life",
+    "ロマンス" to "Romance",
+    "SF" to "Sci-Fi",
+    "サスペンス" to "Mystery",
+    "ホラー" to "Horror",
+    "冒険" to "Adventure"
+)
 
 @Composable
 fun SearchScreen(
-    animeList: List<AnimeItem>,
-    searchText: String,
-    onSearchTextChange: (String) -> Unit,
-    clearQuery: () -> Unit,
     onAnimeClick: (AnimeItem) -> Unit,
     modifier: Modifier = Modifier,
+    searchView: SearchViewModel = viewModel()
 ) {
     val focusManager = LocalFocusManager.current
-
-    val filteredList = rememberSaveable (searchText, animeList) {
-        val query = searchText.trim()
-        if (query.isEmpty()) {
-            animeList
-        } else {
-            animeList.filter { anime ->
-                val title = anime.stringResourceId
-                title.contains(query, ignoreCase = true)
-            }
-        }
-    }
+    val queryText by searchView.searchQuery.collectAsState()
+    val state = searchView.uiState
+    val selectedGenre = searchView.selectedGenre
 
     Column(
         modifier = modifier
@@ -74,12 +84,11 @@ fun SearchScreen(
             style = MaterialTheme.typography.titleLarge
         )
 
-
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
-            value = searchText,
-            onValueChange = onSearchTextChange,
+            value = queryText,
+            onValueChange = { query -> searchView.updateQuery(query) },
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
                 Text(
@@ -96,8 +105,8 @@ fun SearchScreen(
                 )
             },
             trailingIcon = {
-                if (searchText.isNotEmpty()) {
-                    IconButton(onClick = clearQuery) {
+                if (queryText.isNotEmpty()) {
+                    IconButton(onClick = { searchView.clearQuery() }) {
                         Icon(
                             imageVector = Icons.Default.Clear,
                             contentDescription = "Clear",
@@ -121,48 +130,146 @@ fun SearchScreen(
             )
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(GENRE_LIST) { (label, apiGenre) ->
+                val isSelected = apiGenre == selectedGenre
 
-        if (filteredList.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 60.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null,
-                        tint = Color(0xFF3A3A3C),
-                        modifier = Modifier.size(56.dp)
-                    )
-                    Text(
-                        text = "該当する作品が見つかりません",
-                        color = Color(0xFF6E6E73),
-                        fontSize = 14.sp
-                    )
-                }
-            }
-        } else {
-            Column(
-                modifier = Modifier
-                    .padding(vertical = 10.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.all),
-                    color = Color.White,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                AnimeGridContent(
-                    animeList = filteredList,
-                    onAnimeClick = onAnimeClick
+                GenreChip(
+                    label = label,
+                    isSelected = isSelected,
+                    onClick = {
+                        focusManager.clearFocus()
+                        searchView.searchByGenre(apiGenre)
+                    }
                 )
             }
         }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+            ) {
+                when (state) {
+                    is SearchUIState.Loading -> {
+                        Box(
+                            modifier = modifier
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = Color.White)
+                        }
+                    }
+
+                    is SearchUIState.Default -> {
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Text(
+                                text = "人気のアニメ",
+                                color = Color.White,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                            )
+
+                            AnimeGridContent(
+                                animeList = state.trendingAnime,
+                                onAnimeClick = onAnimeClick,
+                                modifier = Modifier
+                                    .weight(1f)
+                            )
+                        }
+                    }
+
+                    is SearchUIState.Success -> {
+                        if (state.animeList.isEmpty()) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = null,
+                                    tint = Color(0xFF3A3A3C),
+                                    modifier = Modifier.size(56.dp)
+                                )
+                                Text(
+                                    text = "該当する作品が見つかりません",
+                                    color = Color(0xFF6E6E73),
+                                    fontSize = 14.sp
+                                )
+                            }
+                        } else {
+                            Column(modifier = Modifier.fillMaxSize()) {
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                val genreTitle = GENRE_LIST.find { it.second == selectedGenre }?.first
+                                    ?:if(queryText.isNotBlank()) "「$queryText」の検索結果" else "検索結果"
+
+                                Text(
+                                    text = genreTitle,
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                                )
+                                AnimeGridContent(
+                                    animeList = state.animeList,
+                                    onAnimeClick = onAnimeClick,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                )
+                            }
+
+                        }
+                    }
+
+                    is SearchUIState.Error -> {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text(text = state.message, color = Color.Red, fontSize = 14.sp)
+                        }
+                    }
+                }
+            }
+
+        Spacer(modifier = Modifier.height(16.dp))
     }
+}
+
+@Composable
+private fun GenreChip(
+    modifier: Modifier = Modifier,
+    label: String,
+    onClick: () -> Unit,
+    isSelected: Boolean = false,
+) {
+    FilterChip(
+        selected = isSelected,
+        onClick = onClick,
+        label = {
+            Text(
+                text = label,
+                fontSize = 13.sp,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+            )
+        },
+        shape = RoundedCornerShape(8.dp),
+        colors = FilterChipDefaults.filterChipColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer
+        ),
+        border = FilterChipDefaults.filterChipBorder(
+            enabled = true,
+            selected = isSelected,
+            borderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+            selectedBorderColor = MaterialTheme.colorScheme.primary,
+            borderWidth = 1.dp,
+            selectedBorderWidth = 1.5.dp
+        ),
+        modifier = modifier
+    )
 }
