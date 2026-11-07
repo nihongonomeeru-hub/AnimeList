@@ -6,7 +6,7 @@ data class AnimeItem(
     val imageResourceId: String,
     val rating: Double? = null,
     val description: String,
-    val genres: List<String>,
+    val genres: List<String>?,
     val episodes: Int?,
     val year: Int?
 )
