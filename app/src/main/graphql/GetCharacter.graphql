@@ -1,0 +1,44 @@
+query GetAnimeCharacterAndCast(
+    $animeId: Int!,
+    $page: Int = 1,
+    $perPage: Int = 24
+) {
+    Media(id: $animeId, type: ANIME) {
+        id
+        characters(page: $page, perPage: $perPage, sort: [ROLE, RELEVANCE, ID]) {
+            pageInfo {
+                hasNextPage
+                currentPage
+            }
+            edges {
+                id
+                role
+                node {
+                    id
+                    name {
+                        userPreferred
+                        native
+                        full
+                    }
+                    image {
+                        large
+                        medium
+                    }
+                }
+                voiceActors(language: JAPANESE, sort: [RELEVANCE, ID]) {
+                    id
+                    name {
+                        userPreferred
+                        native
+                        full
+                    }
+                    image {
+                        large
+                        medium
+                    }
+                    languageV2
+                }
+            }
+        }
+    }
+}

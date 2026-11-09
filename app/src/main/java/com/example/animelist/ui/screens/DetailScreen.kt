@@ -2,57 +2,46 @@ package com.example.animelist.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import com.example.animelist.R
+import com.example.animelist.ui.components.sections.AnimeDetailHeaderSection
+import com.example.animelist.ui.components.sections.AnimeInfoSection
+import com.example.animelist.ui.components.sections.CharactersCastSection
 import com.example.animelist.ui.model.AnimeItem
-import com.example.animelist.view_model.FavoriteViewModel
+import com.example.animelist.view_model.CharacterCastViewModel
 
 @Composable
 fun DetailScreen(
     modifier: Modifier = Modifier,
     animeItem: AnimeItem,
     onBackClick: () -> Unit,
-    viewModel: FavoriteViewModel = viewModel(),
+    characterCastViewModel: CharacterCastViewModel = viewModel()
 ) {
     val scrollState = rememberScrollState()
+    val castUiState by characterCastViewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(animeItem.id) {
+        characterCastViewModel.loadCharactersAndCast(animeItem.id)
+    }
 
     Column(
         modifier = modifier
@@ -60,201 +49,46 @@ fun DetailScreen(
             .background(Color(0xFF0F0F0F))
             .verticalScroll(scrollState)
     ) {
-        Box(
+        AnimeDetailHeaderSection(
+            animeItem = animeItem,
+            onBackClick = onBackClick
+        )
+        AnimeInfoSection(
+            animeItem = animeItem,
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(3f / 4f)
-        ) {
+                .padding(horizontal = 16.dp)
+        )
 
-            AsyncImage(
-                model = animeItem.imageResourceId,
-                contentDescription = animeItem.stringResourceId,
-                contentScale = ContentScale.Crop,
-                alignment = Alignment.TopCenter,
-                modifier = Modifier.fillMaxSize()
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .height(100.dp)
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color(0x99000000),
-                                Color.Transparent
-                            )
-                        )
-                    )
-            )
+        Spacer(modifier = Modifier.height(48.dp))
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color(0x660F0F0F),
-                                Color(0xFF0F0F0F)
-                            ),
-                            startY = 100f
-                        )
-                    )
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Surface(
-                    shape = CircleShape,
-                    color = Color.Black.copy(alpha = 0.5f),
-                    modifier = Modifier.size(40.dp)
-                ) {
-                    IconButton(
-                        onClick = onBackClick
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back),
-                            tint = Color.White
-                        )
-                    }
-                }
-                Surface(
-                    shape = CircleShape,
-                    color = Color.Black.copy(alpha = 0.5f),
-                    modifier = Modifier.size(40.dp)
-                ) {
-
-                    val isFavorite by viewModel.isFavorite(animeItem)
-                        .collectAsStateWithLifecycle(initialValue = false)
-
-                    IconButton(
-                        onClick = {
-                            viewModel.toggleFavorite(animeItem)
-                        }
-                    ) {
-                        Icon(
-                            imageVector = if(isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                            contentDescription = stringResource(R.string.to_mylist),
-                            tint = if(isFavorite) Color.Red else Color.Gray
-                        )
-                    }
-                }
-            }
-        }
-
-        Column(
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            Text(
-                text = animeItem.stringResourceId,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
+            val genres = animeItem.genres
+            genres?.forEach { genre ->
                 Surface(
-                    color = Color(0xFF222222),
-                    shape = RoundedCornerShape(4.dp)
+                    color = Color(0xFF1E1E1E),
+                    shape = RoundedCornerShape(16.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            tint = Color(0xFFFFD700),
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Text(
-                            text = animeItem.rating?.toString() ?: "—",
-                            color = Color.White,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
+                    Text(
+                        text = genre,
+                        color = Color(0xFFB0B0B0),
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                    )
                 }
-
-                val episodesText = when {
-                    animeItem.episodes != null -> "${animeItem.episodes}話"
-                    else -> "放送中"
-                }
-
-                Text(
-                    text = episodesText,
-                    color = Color.Gray,
-                    fontSize = 13.sp
-                )
-
-                val yearText = if (animeItem.year != null) animeItem.year.toString()  else "—"
-                Text(
-                    text =  yearText ,
-                    color = Color.Gray,
-                    fontSize = 13.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "あらすじ",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            val cleanDescription = animeItem.description
-                .replace(Regex("<.*?>"), " ")
-
-            Text(
-                text = cleanDescription,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFFCCCCCC),
-                lineHeight = 22.sp
-            )
-
-            Spacer(modifier = Modifier.height(48.dp))
-
-            Column {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    val genres = animeItem.genres
-                    genres?.forEach { genre ->
-                        Surface(
-                            color = Color(0xFF1E1E1E),
-                            shape = RoundedCornerShape(16.dp)
-                        ) {
-                            Text(
-                                text = genre,
-                                color = Color(0xFFB0B0B0),
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
             }
         }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        CharactersCastSection(
+            castUiState = castUiState,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
