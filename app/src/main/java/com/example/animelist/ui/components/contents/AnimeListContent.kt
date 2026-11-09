@@ -33,6 +33,7 @@ import com.example.animelist.ui.model.AnimeSection
 fun AnimeListContent(
     sections: List<AnimeSection>,
     onAnimeClick: (AnimeItem) -> Unit,
+    onLongClick: ((AnimeItem) -> Unit)? = null,
     onSeeAllClick: (AnimeSection) -> Unit,
     modifier: Modifier = Modifier,
     headerContent: (@Composable () -> Unit)? = null,
@@ -67,7 +68,6 @@ fun AnimeListContent(
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .clickable { onSeeAllClick(section) }
                             .padding(
                                 start = 16.dp,
                                 end = 16.dp,
@@ -96,7 +96,8 @@ fun AnimeListContent(
                     ) { animeItem ->
                         AnimeCard(
                             animeItem = animeItem,
-                            onAnimeClick = onAnimeClick
+                            onAnimeClick = onAnimeClick,
+                            onLongClick = onLongClick?.let { {it(animeItem)} }
                         )
                     }
                 }

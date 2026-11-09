@@ -63,6 +63,7 @@ private val GENRE_LIST = listOf(
 @Composable
 fun SearchScreen(
     onAnimeClick: (AnimeItem) -> Unit,
+    onLongClick: (AnimeItem) -> Unit,
     modifier: Modifier = Modifier,
     searchView: SearchViewModel = viewModel()
 ) {
@@ -176,6 +177,7 @@ fun SearchScreen(
 
                             AnimeGridContent(
                                 animeList = state.trendingAnime,
+                                onLongClick = onLongClick,
                                 onAnimeClick = onAnimeClick,
                                 modifier = Modifier
                                     .weight(1f)
@@ -218,6 +220,7 @@ fun SearchScreen(
                                 AnimeGridContent(
                                     animeList = state.animeList,
                                     onAnimeClick = onAnimeClick,
+                                    onLongClick = onLongClick,
                                     modifier = Modifier
                                         .weight(1f)
                                 )

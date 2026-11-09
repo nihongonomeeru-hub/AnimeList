@@ -29,13 +29,18 @@ class FavoriteViewModel(application: Application): AndroidViewModel(application)
 
     fun isFavorite(animeItem: AnimeItem): Flow<Boolean> = dao.isFavorite(animeItem.id)
 
-    fun toggleFavorite(anime: AnimeItem) {
+    fun toggleFavorite(
+        anime: AnimeItem,
+        onResult: ((isAdded: Boolean) -> Unit)? = null
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             val alreadyFavorite = dao.isFavoriteOneShot(anime.id)
             if (alreadyFavorite) {
                 dao.deleteFavoriteById(anime.id)
+                onResult?.invoke(false)
             } else {
                 dao.insertFavorite(anime.toEntity())
+                onResult?.invoke(true)
             }
         }
     }

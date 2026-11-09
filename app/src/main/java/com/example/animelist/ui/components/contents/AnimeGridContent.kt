@@ -13,9 +13,10 @@ import com.example.animelist.ui.model.AnimeItem
 
 @Composable
 fun AnimeGridContent(
+    modifier: Modifier = Modifier,
     animeList: List<AnimeItem>,
     onAnimeClick: (AnimeItem) -> Unit,
-    modifier: Modifier = Modifier,
+    onLongClick: ((AnimeItem) -> Unit)? = null,
     contentPadding: PaddingValues = PaddingValues(16.dp)
 ) {
     LazyVerticalGrid(
@@ -31,7 +32,8 @@ fun AnimeGridContent(
         ) { anime ->
             AnimeCard(
                 animeItem = anime,
-                onAnimeClick = onAnimeClick
+                onAnimeClick = onAnimeClick,
+                onLongClick = onLongClick?.let { action -> {action(anime) }}
             )
         }
     }

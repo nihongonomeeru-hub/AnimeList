@@ -28,7 +28,8 @@ import com.example.animelist.ui.components.contents.AnimeGridContent
 fun SectionDetail(
     section: AnimeSection,
     onBackClick: () -> Unit,
-    onAnimeClick: (AnimeItem) -> Unit
+    onAnimeClick: (AnimeItem) -> Unit,
+    onLongClick: ((AnimeItem) -> Unit)? = null
 ) {
     Column(
         modifier = Modifier
@@ -56,7 +57,8 @@ fun SectionDetail(
         }
         AnimeGridContent(
             animeList = section.items,
-            onAnimeClick = onAnimeClick
+            onAnimeClick = onAnimeClick,
+            onLongClick = onLongClick
         )
     }
 }

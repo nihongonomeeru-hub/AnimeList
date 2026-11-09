@@ -48,6 +48,7 @@ fun FavoriteListItem(
             AnimeCard(
                 animeItem = anime,
                 onAnimeClick = {},
+                onLongClick = {},
                 modifier = Modifier.fillMaxSize()
             )
         }

@@ -37,13 +37,16 @@ import com.example.animelist.ui.screens.main_screens.SearchScreen
 import com.example.animelist.view_model.HomePageViewModel
 import androidx.compose.runtime.rememberCoroutineScope
 import com.example.animelist.ui.components.SectionDetail
+import com.example.animelist.ui.model.AnimeItem
+import com.example.animelist.view_model.FavoriteViewModel
 import com.example.animelist.view_model.SearchViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
     searchViewModel: SearchViewModel = viewModel(),
-    viewModel: HomePageViewModel = viewModel()
+    viewModel: HomePageViewModel = viewModel(),
+    favoriteViewModel: FavoriteViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val selectedAnime = viewModel.selectedAnime
@@ -53,6 +56,19 @@ fun MainScreen(
 
     val selectedSection = viewModel.selectedSection
     val coroutineScope = rememberCoroutineScope()
+
+    val handleToggleFavorite: (AnimeItem) -> Unit = { anime ->
+        favoriteViewModel.toggleFavorite(anime) { isAdded ->
+            val text = if (isAdded) {
+                "「${anime.stringResourceId}」をお気に入りに追加しました"
+            } else {
+                "「${anime.stringResourceId}」をお気に入りから削除しました"
+            }
+            (context as? Activity)?.runOnUiThread {
+                Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     BackHandler{
         if(selectedAnime != null) {
@@ -109,7 +125,10 @@ fun MainScreen(
             ) {
                 when (currentRoute) {
                     BottomNavItem.Home.route -> {
-                        HomePage(viewModel = viewModel)
+                        HomePage(
+                            viewModel = viewModel,
+                            onLongClick = handleToggleFavorite
+                        )
                         androidx.compose.animation.AnimatedVisibility(
                             visible = selectedSection != null,
                             enter = androidx.compose.animation.slideInHorizontally(
@@ -125,14 +144,16 @@ fun MainScreen(
                                 SectionDetail(
                                     section = section,
                                     onBackClick = { viewModel.closeSection() },
-                                    onAnimeClick = { anime -> viewModel.selectedAnime(anime) }
+                                    onAnimeClick = { anime -> viewModel.selectedAnime(anime) },
+                                    onLongClick = handleToggleFavorite
                                 )
                             }
                         }
                     }
 
                     BottomNavItem.Search.route -> SearchScreen(
-                        onAnimeClick = { anime -> viewModel.selectedAnime(anime) }
+                        onAnimeClick = { anime -> viewModel.selectedAnime(anime) },
+                        onLongClick = handleToggleFavorite
                     )
                     BottomNavItem.Favorites.route -> FavoritesScreen(
                         onAnimeClick = { anime -> viewModel.selectedAnime(anime) }
