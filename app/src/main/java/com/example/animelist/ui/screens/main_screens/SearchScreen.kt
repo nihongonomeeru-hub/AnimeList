@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.animelist.R
-import com.example.animelist.ui.components.AnimeGridContent
+import com.example.animelist.ui.components.contents.AnimeGridContent
 import com.example.animelist.ui.model.AnimeItem
 import com.example.animelist.view_model.SearchViewModel
 import com.example.animelist.view_model.uiState.SearchUIState

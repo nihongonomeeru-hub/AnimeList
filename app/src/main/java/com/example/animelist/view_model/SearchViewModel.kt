@@ -148,6 +148,10 @@ class SearchViewModel: ViewModel() {
         }
     }
 
+    fun clearGenre() {
+        selectedGenre = null
+    }
+
     fun updateQuery(newQuery: String) {
         _searchQuery.value = newQuery
     }
