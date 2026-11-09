@@ -185,7 +185,7 @@ fun MainScreen(
                 ) { anime ->
                     if (anime != null) {
                         DetailScreen(
-                            animeItem = anime,
+                            animeId = anime.id,
                             onBackClick = { viewModel.clearSelection() }
                         )
                     }

@@ -1,0 +1,25 @@
+query GetAnimeDetail($animeId: Int!) {
+    Media(id: $animeId, type: ANIME) {
+        id
+        title {
+            native
+            romaji
+            english
+        }
+        coverImage {
+            large
+            medium
+        }
+        bannerImage
+        description(asHtml: false)
+        weightedScore
+        episodes
+        seasonYear
+        genres
+        trailer {
+            id
+            site
+            thumbnail
+        }
+    }
+}

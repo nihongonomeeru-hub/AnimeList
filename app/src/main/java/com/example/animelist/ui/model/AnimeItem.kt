@@ -8,5 +8,6 @@ data class AnimeItem(
     val description: String,
     val genres: List<String>?,
     val episodes: Int?,
-    val year: Int?
+    val year: Int?,
+    val trailer: TrailerItem? = null
 )

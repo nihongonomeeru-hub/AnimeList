@@ -2,6 +2,7 @@ package com.example.animelist.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,11 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -25,70 +28,109 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.animelist.ui.components.sections.AnimeDetailHeaderSection
 import com.example.animelist.ui.components.sections.AnimeInfoSection
+import com.example.animelist.ui.components.sections.AnimeTrailerSection
 import com.example.animelist.ui.components.sections.CharactersCastSection
 import com.example.animelist.ui.model.AnimeItem
 import com.example.animelist.view_model.CharacterCastViewModel
+import com.example.animelist.view_model.DetailViewModel
+import com.example.animelist.view_model.uiState.DetailUiState
 
 @Composable
 fun DetailScreen(
     modifier: Modifier = Modifier,
-    animeItem: AnimeItem,
+    animeId: Int,
     onBackClick: () -> Unit,
+    detailViewModel: DetailViewModel = viewModel(),
     characterCastViewModel: CharacterCastViewModel = viewModel()
 ) {
     val scrollState = rememberScrollState()
+    val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
     val castUiState by characterCastViewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(animeItem.id) {
-        characterCastViewModel.loadCharactersAndCast(animeItem.id)
+    LaunchedEffect(animeId) {
+        detailViewModel.loadAnimeDetail(animeId)
+        characterCastViewModel.loadCharactersAndCast(animeId)
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color(0xFF0F0F0F))
-            .verticalScroll(scrollState)
-    ) {
-        AnimeDetailHeaderSection(
-            animeItem = animeItem,
-            onBackClick = onBackClick
-        )
-        AnimeInfoSection(
-            animeItem = animeItem,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        )
-
-        Spacer(modifier = Modifier.height(48.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            val genres = animeItem.genres
-            genres?.forEach { genre ->
-                Surface(
-                    color = Color(0xFF1E1E1E),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Text(
-                        text = genre,
-                        color = Color(0xFFB0B0B0),
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                    )
-                }
+    when (val state = detailState) {
+        is DetailUiState.Loading -> {
+            Box(
+                modifier = modifier.fillMaxSize().background(Color(0xFF0F0F0F)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = Color.White)
             }
         }
+        is DetailUiState.Error -> {
+            Box(
+                modifier = modifier.fillMaxSize().background(Color(0xFF0F0F0F)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = state.message, color = Color.Gray)
+            }
+        }
+        is DetailUiState.Success -> {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(Color(0xFF0F0F0F))
+                    .verticalScroll(scrollState)
+            ) {
+                AnimeDetailHeaderSection(
+                    animeItem = state.anime,
+                    onBackClick = onBackClick
+                )
+                AnimeInfoSection(
+                    animeItem = state.anime,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                )
 
-        Spacer(modifier = Modifier.height(20.dp))
+                if(state.anime.trailer != null) {
+                    Spacer(modifier = Modifier.height(48.dp))
 
-        CharactersCastSection(
-            castUiState = castUiState,
-            modifier = Modifier.fillMaxWidth()
-        )
+                    AnimeTrailerSection(
+                        trailer = state.anime.trailer,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(48.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    val genres = state.anime.genres
+                    genres?.forEach { genre ->
+                        Surface(
+                            color = Color(0xFF1E1E1E),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Text(
+                                text = genre,
+                                color = Color(0xFFB0B0B0),
+                                fontSize = 12.sp,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                CharactersCastSection(
+                    castUiState = castUiState,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
     }
+
+
 }

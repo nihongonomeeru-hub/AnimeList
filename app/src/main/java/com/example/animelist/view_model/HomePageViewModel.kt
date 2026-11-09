@@ -11,6 +11,7 @@ import com.example.animelist.data.network.NetworkModule
 import com.example.animelist.graphql.GetAnimeListQuery
 import com.example.animelist.ui.model.AnimeItem
 import com.example.animelist.ui.model.AnimeSection
+import com.example.animelist.ui.model.TrailerItem
 import com.example.animelist.view_model.uiState.HomeUIState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
