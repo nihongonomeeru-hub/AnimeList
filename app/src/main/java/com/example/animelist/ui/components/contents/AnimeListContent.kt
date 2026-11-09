@@ -1,4 +1,4 @@
-package com.example.animelist.ui.components
+package com.example.animelist.ui.components.contents
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.animelist.R
+import com.example.animelist.ui.components.AnimeCard
 import com.example.animelist.ui.model.AnimeItem
 import com.example.animelist.ui.model.AnimeSection
 

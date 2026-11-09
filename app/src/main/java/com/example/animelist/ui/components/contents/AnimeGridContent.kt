@@ -1,4 +1,4 @@
-package com.example.animelist.ui.components
+package com.example.animelist.ui.components.contents
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.animelist.ui.components.AnimeCard
 import com.example.animelist.ui.model.AnimeItem
 
 @Composable

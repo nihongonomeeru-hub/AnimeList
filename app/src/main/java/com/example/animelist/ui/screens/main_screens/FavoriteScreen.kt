@@ -1,26 +1,18 @@
 package com.example.animelist.ui.screens.main_screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,14 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.animelist.R
-import com.example.animelist.ui.components.AnimeCard
+import com.example.animelist.ui.components.FavoriteListItem
 import com.example.animelist.ui.model.AnimeItem
 import com.example.animelist.view_model.FavoriteViewModel
 
@@ -115,59 +105,12 @@ fun FavoritesContent(
                 items = favorites,
                 key = {anime -> anime.id}
             ) { anime ->
-                FavoriteList(
+                FavoriteListItem(
                     anime = anime,
                     onAnimeClick = onAnimeClick,
                     onRemoveFavorite = onRemoveFavorite
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun FavoriteList(
-    onAnimeClick: (AnimeItem) -> Unit,
-    onRemoveFavorite: (AnimeItem) -> Unit,
-    anime: AnimeItem
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .clickable { onAnimeClick(anime) },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .width(80.dp)
-                .height(115.dp)
-        ) {
-            AnimeCard(
-                animeItem = anime,
-                onAnimeClick = onAnimeClick,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = anime.stringResourceId,
-            color = Color.White,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Medium,
-            textAlign = TextAlign.Start,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f)
-        )
-        IconButton(
-            onClick = { onRemoveFavorite(anime) }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = stringResource(R.string.delete),
-                tint = Color.LightGray
-            )
         }
     }
 }

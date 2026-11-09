@@ -89,6 +89,7 @@ fun MainScreen(
                                         }
                                     }
                                 } else if(item.route == BottomNavItem.Search.route) {
+                                    searchViewModel.clearGenre()
                                     searchViewModel.clearQuery()
                                 }
                             } else {

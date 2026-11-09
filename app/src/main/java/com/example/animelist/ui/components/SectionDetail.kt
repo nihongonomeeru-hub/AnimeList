@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.example.animelist.ui.model.AnimeItem
 import com.example.animelist.ui.model.AnimeSection
 import com.example.animelist.R
+import com.example.animelist.ui.components.contents.AnimeGridContent
 
 @Composable
 fun SectionDetail(
