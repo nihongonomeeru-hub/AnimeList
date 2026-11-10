@@ -1,5 +1,6 @@
 package com.example.animelist.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -36,6 +37,7 @@ fun FavoriteListItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .background(Color(0xFF0F0F0F))
             .padding(vertical = 4.dp)
             .clickable { onAnimeClick(anime) },
         verticalAlignment = Alignment.CenterVertically

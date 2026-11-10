@@ -10,16 +10,33 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -30,6 +47,7 @@ import com.example.animelist.R
 import com.example.animelist.ui.components.FavoriteListItem
 import com.example.animelist.ui.model.AnimeItem
 import com.example.animelist.view_model.FavoriteViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun FavoritesScreen(
@@ -37,28 +55,50 @@ fun FavoritesScreen(
     favViewModel: FavoriteViewModel = viewModel(),
     onAnimeClick: (AnimeItem) -> Unit
 ) {
+    val snackBarHost = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     val favorites by favViewModel.favorites.collectAsStateWithLifecycle()
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color(0xFF0F0F0F))
-            .statusBarsPadding()
-            .padding(horizontal = 16.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.my_list),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.padding(vertical = 16.dp)
-        )
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHost) },
+        containerColor = Color(0xFF0F0F0F)
+    ) { innerPadding ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color(0xFF0F0F0F))
+                .statusBarsPadding()
+                .padding(horizontal = 16.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.my_list),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
 
-        FavoritesContent(
-            favorites = favorites,
-            onAnimeClick = onAnimeClick,
-            onRemoveFavorite = { animeId -> favViewModel.toggleFavorite(animeId) },
-            modifier = Modifier.fillMaxSize()
-        )
+            FavoritesContent(
+                favorites = favorites,
+                onAnimeClick = onAnimeClick,
+                onRemoveFavorite = { animeId ->
+                    favViewModel.toggleFavorite(animeId)
+
+                    scope.launch {
+                        val result = snackBarHost.showSnackbar(
+                            message = "${animeId.stringResourceId}を削除しました",
+                            actionLabel = "元に戻す",
+                            withDismissAction = true,
+                            duration = SnackbarDuration.Short
+                        )
+
+                        if(result == SnackbarResult.ActionPerformed) {
+                            favViewModel.toggleFavorite(animeId)
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 
@@ -97,6 +137,8 @@ fun FavoritesContent(
     if(favorites.isEmpty()) {
         EmptyFavoritesPlaceholder()
     } else {
+        val haptic = LocalHapticFeedback.current
+
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = modifier.fillMaxSize()
@@ -105,11 +147,62 @@ fun FavoritesContent(
                 items = favorites,
                 key = {anime -> anime.id}
             ) { anime ->
-                FavoriteListItem(
-                    anime = anime,
-                    onAnimeClick = onAnimeClick,
-                    onRemoveFavorite = onRemoveFavorite
+                val dismissState = rememberSwipeToDismissBoxState(
+                    confirmValueChange = { value ->
+                        if(value == SwipeToDismissBoxValue.EndToStart) {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            onRemoveFavorite(anime)
+                            true
+                        } else {
+                            false
+                        }
+                    }
                 )
+
+                SwipeToDismissBox(
+                    state = dismissState,
+                    enableDismissFromStartToEnd = false,
+                    enableDismissFromEndToStart = true,
+                    modifier = Modifier
+                        .animateItem()
+                        .clip(RoundedCornerShape(12.dp)),
+                    backgroundContent = {
+                        val progress = if(dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
+                                dismissState.progress
+                            } else {
+                                0f
+                            }
+
+                        val backgroundColor = androidx.compose.ui.graphics.lerp(
+                            start = Color(0xFF2C2C2E),
+                            stop = Color(0xFFE53935),
+                            fraction = (progress * 1.5f).coerceIn(0f, 1f)
+                        )
+
+                        val iconScale = 0.8f + (progress * 0.5f).coerceAtMost(0.5f)
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(backgroundColor)
+                                .padding(end = 24.dp),
+                            contentAlignment = Alignment.CenterEnd
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "削除",
+                                tint = Color.White,
+                                modifier = Modifier.scale(iconScale)
+                            )
+                        }
+                    }
+                ) {
+                    FavoriteListItem(
+                        anime = anime,
+                        onAnimeClick = onAnimeClick,
+                        onRemoveFavorite = onRemoveFavorite
+                    )
+                }
             }
         }
     }
