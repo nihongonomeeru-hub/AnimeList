@@ -44,6 +44,17 @@ AniList GraphQL API を活用し、最新のアニメトレンド情報の閲覧
 
 ---
 
+## 🚀 開発環境 (Environment)
+
+* **Android Studio:** Quail (2026.1.4) 以降推奨
+* **JDK:** 17 以上 (推奨: 21 / 25)
+* **Android SDK:**
+  * `compileSdk`: 37
+  * `minSdk`: 26 (Android 8.0 Oreo 以上)
+  * `targetSdk`: 37
+
+---
+
 ## 📸 スクリーンショット (Screenshots)
 
 |                    ホーム画面                    |                   ランキング一覧                    |                    作品詳細画面                     |                    作品詳細画面(1)                    |
@@ -53,17 +64,6 @@ AniList GraphQL API を活用し、最新のアニメトレンド情報の閲覧
 |                  検索・ジャンル絞り込み                  |                      マイリスト                       |                         スワイプ削除                          |
 |:---------------------------------------------:|:------------------------------------------------:|:-------------------------------------------------------:|
 | <img src="art/search_page.png" width="220" /> | <img src="art/favourite_page.png" width="220" /> | <img src="art/favourite_page_delete.png" width="220" /> | 
-
----
-
-## 🚀 開発環境 (Environment)
-
-* **Android Studio:** Quail (2026.1.4) 以降推奨
-* **JDK:** 17 以上 (推奨: 21 / 25)
-* **Android SDK:**
-    * `compileSdk`: 37
-    * `minSdk`: 26 (Android 8.0 Oreo 以上)
-    * `targetSdk`: 37
 
 ---
 
