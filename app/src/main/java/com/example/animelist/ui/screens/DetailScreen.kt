@@ -4,12 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -30,7 +32,6 @@ import com.example.animelist.ui.components.sections.AnimeDetailHeaderSection
 import com.example.animelist.ui.components.sections.AnimeInfoSection
 import com.example.animelist.ui.components.sections.AnimeTrailerSection
 import com.example.animelist.ui.components.sections.CharactersCastSection
-import com.example.animelist.ui.model.AnimeItem
 import com.example.animelist.view_model.CharacterCastViewModel
 import com.example.animelist.view_model.DetailViewModel
 import com.example.animelist.view_model.uiState.DetailUiState
@@ -100,24 +101,30 @@ fun DetailScreen(
 
                 Spacer(modifier = Modifier.height(48.dp))
 
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    val genres = state.anime.genres
-                    genres?.forEach { genre ->
-                        Surface(
-                            color = Color(0xFF1E1E1E),
-                            shape = RoundedCornerShape(16.dp)
-                        ) {
-                            Text(
-                                text = genre,
-                                color = Color(0xFFB0B0B0),
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                            )
+                val genres = state.anime.genres
+                if(!genres.isNullOrEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(
+                            items = genres,
+                            key = { genre -> genre }
+                        ) { genre ->
+                            Surface(
+                                color = Color(0xFF1E1E1E),
+                                shape = RoundedCornerShape(16.dp)
+                            ) {
+                                Text(
+                                    text = genre,
+                                    color = Color(0xFFB0B0B0),
+                                    fontSize = 12.sp,
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -126,7 +133,8 @@ fun DetailScreen(
 
                 CharactersCastSection(
                     castUiState = castUiState,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                 )
             }
         }
