@@ -1,42 +1,42 @@
-query GetAnimeList($year: Int) {
+query GetAnimeList($year: Int, $isAdult: Boolean = false) {
     popular: Page(page: 1, perPage: 50) {
-        media(type: ANIME, sort: POPULARITY_DESC) {
+        media(type: ANIME, sort: POPULARITY_DESC, isAdult: $isAdult) {
             ...AnimeCardFields
         }
     }
     topRated: Page(page: 1, perPage: 50) {
-        media(type: ANIME, sort: SCORE_DESC) {
+        media(type: ANIME, sort: SCORE_DESC, isAdult: $isAdult) {
             ...AnimeCardFields
         }
     }
     this_year: Page(page: 1, perPage: 50) {
-        media(type: ANIME, seasonYear: $year, sort: POPULARITY_DESC) {
+        media(type: ANIME, seasonYear: $year, sort: POPULARITY_DESC, isAdult: $isAdult) {
             ...AnimeCardFields
         }
     }
     airing: Page(page: 1, perPage: 50) {
-        media(type: ANIME, status: RELEASING, sort: POPULARITY_DESC) {
+        media(type: ANIME, status: RELEASING, sort: POPULARITY_DESC, isAdult: $isAdult) {
             ...AnimeCardFields
         }
     }
     season: Page(page: 1, perPage: 50) {
         media(type: ANIME, seasonYear: $year,
-            season: FALL, sort: POPULARITY_DESC) {
+            season: FALL, sort: POPULARITY_DESC, isAdult: $isAdult) {
             ...AnimeCardFields
         }
     }
     recommendations: Page(page: 1, perPage: 50) {
-        media(type: ANIME, sort: TRENDING_DESC) {
+        media(type: ANIME, sort: TRENDING_DESC, isAdult: $isAdult) {
             ...AnimeCardFields
         }
     }
     action: Page(page: 1, perPage: 50) {
-        media(type: ANIME, genre: "Action", sort: POPULARITY_DESC) {
+        media(type: ANIME, genre: "Action", sort: POPULARITY_DESC, isAdult: $isAdult) {
             ...AnimeCardFields
         }
     }
     comedy: Page(page: 1, perPage: 50) {
-        media(type: ANIME, genre: "Comedy", sort: POPULARITY_DESC) {
+        media(type: ANIME, genre: "Comedy", sort: POPULARITY_DESC, isAdult: $isAdult) {
             ...AnimeCardFields
         }
     }
@@ -57,6 +57,7 @@ fragment AnimeCardFields on Media {
         medium
     }
     bannerImage
+    isAdult
     description(asHtml: false)
     weightedScore
     episodes
