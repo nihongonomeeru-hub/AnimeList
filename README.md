@@ -44,14 +44,12 @@ AniList GraphQL API を活用し、最新のアニメトレンド情報の閲覧
 
 ---
 
-## 🚀 開発環境 (Environment)
+## 🎬 Feature Demos (機能デモ)
 
-* **Android Studio:** Quail (2026.1.4) 以降推奨
-* **JDK:** 17 以上 (推奨: 21 / 25)
-* **Android SDK:**
-  * `compileSdk`: 37
-  * `minSdk`: 26 (Android 8.0 Oreo 以上)
-  * `targetSdk`: 37
+| Home & Transitions | Category Browsing | Instant Search | Favorites (Room DB) |
+| :---: | :---: | :---: | :---: |
+| ![Home Demo](art/app1.gif) | ![Category Demo](art/app2.gif) | ![Search Demo](art/app3.gif) | ![Favorites Demo](art/app4.gif) |
+| **ホーム・バナー遷移** | **カテゴリー一覧** | **インクリメンタル検索** | **マイリスト・DB永続化** |
 
 ---
 
@@ -67,11 +65,13 @@ AniList GraphQL API を活用し、最新のアニメトレンド情報の閲覧
 
 ---
 
-## 🎬 Feature Demos (機能デモ)
+## 🚀 開発環境 (Environment)
 
-| Home & Transitions | Category Browsing | Instant Search | Favorites (Room DB) |
-| :---: | :---: | :---: | :---: |
-| ![Home Demo](art/app1.gif) | ![Category Demo](art/app2.gif) | ![Search Demo](art/app3.gif) | ![Favorites Demo](art/app4.gif) |
-| **ホーム・バナー遷移** | **カテゴリー一覧** | **インクリメンタル検索** | **マイリスト・DB永続化** |
+* **Android Studio:** Quail (2026.1.4) 以降推奨
+* **JDK:** 17 以上 (推奨: 21 / 25)
+* **Android SDK:**
+  * `compileSdk`: 37
+  * `minSdk`: 26 (Android 8.0 Oreo 以上)
+  * `targetSdk`: 37
 
 ---
