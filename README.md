@@ -58,10 +58,12 @@ AniList GraphQL API を活用し、最新のアニメトレンド情報の閲覧
 
 ## 🚀 開発環境 (Environment)
 
-- **IDE**: Android Studio Ladybug / Koala
-- **Target SDK**: 35 (または 34)
-- **Min SDK**: 26
-- **JDK**: 17
+* **Android Studio:** Quail (2026.1.4) 以降推奨
+* **JDK:** 17 以上 (推奨: 21 / 25)
+* **Android SDK:**
+    * `compileSdk`: 37
+    * `minSdk`: 26 (Android 8.0 Oreo 以上)
+    * `targetSdk`: 37
 
 ---
 
