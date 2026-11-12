@@ -19,8 +19,8 @@ data class AnimeEntity(
 
 fun AnimeEntity.toAnimeItem(): AnimeItem = AnimeItem(
     id = id,
-    stringResourceId = title,
-    imageResourceId = imageUrl,
+    title = title,
+    imageUrl = imageUrl,
     rating = rating,
     description = description.toString(),
     genres = genres,
@@ -30,8 +30,8 @@ fun AnimeEntity.toAnimeItem(): AnimeItem = AnimeItem(
 
 fun AnimeItem.toEntity(): AnimeEntity = AnimeEntity(
     id = id,
-    title = stringResourceId,
-    imageUrl = imageResourceId,
+    title = title,
+    imageUrl = imageUrl,
     rating = rating,
     description = description,
     genres = genres,

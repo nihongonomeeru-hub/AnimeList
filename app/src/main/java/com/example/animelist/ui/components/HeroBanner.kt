@@ -44,7 +44,7 @@ fun HeroBanner(
             .height(510.dp)
     ) {
         AsyncImage(
-            model = animeOfDay?.imageResourceId,
+            model = animeOfDay?.imageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
@@ -85,7 +85,7 @@ fun HeroBanner(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = animeOfDay?.stringResourceId.orEmpty(),
+                text = animeOfDay?.title.orEmpty(),
                 color = Color.White,
                 fontSize = 26.sp,
                 fontWeight = FontWeight.ExtraBold,

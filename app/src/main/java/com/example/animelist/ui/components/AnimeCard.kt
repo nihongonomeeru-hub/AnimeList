@@ -48,8 +48,8 @@ fun AnimeCard(
             .then(clickModifier)
     ) {
         AsyncImage(
-            model = animeItem.imageResourceId,
-            contentDescription = animeItem.stringResourceId,
+            model = animeItem.imageUrl,
+            contentDescription = animeItem.title,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()

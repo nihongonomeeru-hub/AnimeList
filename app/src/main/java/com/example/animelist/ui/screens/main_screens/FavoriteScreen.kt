@@ -1,5 +1,6 @@
 package com.example.animelist.ui.screens.main_screens
 
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +18,6 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,7 +53,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun FavoritesScreen(
     modifier: Modifier= Modifier,
-    favViewModel: FavoriteViewModel = viewModel(),
+    favViewModel: FavoriteViewModel = viewModel(
+        factory = FavoriteViewModel.provideFactory(
+            LocalContext.current.applicationContext as Application
+        )
+    ),
     onAnimeClick: (AnimeItem) -> Unit
 ) {
     val snackBarHost = remember { SnackbarHostState() }
@@ -85,7 +90,7 @@ fun FavoritesScreen(
 
                     scope.launch {
                         val result = snackBarHost.showSnackbar(
-                            message = "${animeId.stringResourceId}を削除しました",
+                            message = "${animeId.title}を削除しました",
                             actionLabel = "元に戻す",
                             withDismissAction = true,
                             duration = SnackbarDuration.Short

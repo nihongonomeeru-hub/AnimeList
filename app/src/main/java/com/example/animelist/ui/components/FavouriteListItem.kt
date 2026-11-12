@@ -56,7 +56,7 @@ fun FavoriteListItem(
         }
         Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = anime.stringResourceId,
+            text = anime.title,
             color = Color.White,
             fontSize = 15.sp,
             fontWeight = FontWeight.Medium,

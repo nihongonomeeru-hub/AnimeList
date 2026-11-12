@@ -1,6 +1,7 @@
 package com.example.animelist.ui.screens
 
 import android.app.Activity
+import android.app.Application
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -46,7 +47,11 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     searchViewModel: SearchViewModel = viewModel(),
     viewModel: HomePageViewModel = viewModel(),
-    favoriteViewModel: FavoriteViewModel = viewModel()
+    favoriteViewModel: FavoriteViewModel = viewModel(
+        factory = FavoriteViewModel.provideFactory(
+            LocalContext.current.applicationContext as Application
+        )
+    )
 ) {
     val context = LocalContext.current
     val selectedAnime = viewModel.selectedAnime
@@ -60,9 +65,9 @@ fun MainScreen(
     val handleToggleFavorite: (AnimeItem) -> Unit = { anime ->
         favoriteViewModel.toggleFavorite(anime) { isAdded ->
             val text = if (isAdded) {
-                "「${anime.stringResourceId}」をお気に入りに追加しました"
+                "「${anime.title}」をお気に入りに追加しました"
             } else {
-                "「${anime.stringResourceId}」をお気に入りから削除しました"
+                "「${anime.title}」をお気に入りから削除しました"
             }
             (context as? Activity)?.runOnUiThread {
                 Toast.makeText(context, text, Toast.LENGTH_SHORT).show()

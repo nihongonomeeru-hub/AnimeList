@@ -33,7 +33,7 @@ fun AnimeInfoSection(
         modifier = modifier.fillMaxWidth()
     ) {
         Text(
-            text = animeItem.stringResourceId,
+            text = animeItem.title,
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = Color.White

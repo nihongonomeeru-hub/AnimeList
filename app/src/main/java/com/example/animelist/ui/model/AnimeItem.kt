@@ -2,8 +2,8 @@ package com.example.animelist.ui.model
 
 data class AnimeItem(
     val id: Int,
-    val stringResourceId: String,
-    val imageResourceId: String,
+    val title: String,
+    val imageUrl: String,
     val rating: Double? = null,
     val description: String,
     val genres: List<String>?,
