@@ -6,6 +6,7 @@ import com.apollographql.apollo.exception.ApolloNetworkException
 import com.example.animelist.data.network.NetworkModule
 import com.example.animelist.data.local.repository.AnimeDetailRepository
 import com.example.animelist.data.local.repository.AnimeDetailRepositoryImpl
+import com.example.animelist.graphql.type.MediaType
 import com.example.animelist.view_model.uiState.DetailUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,11 +22,17 @@ class DetailViewModel(
     private var fetchJob: Job? = null
     val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
 
-    fun loadAnimeDetail(animeId: Int) {
+    fun loadAnimeDetail(
+        animeId: Int,
+        mediaType: MediaType = MediaType.ANIME
+    ) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
             _uiState.value = DetailUiState.Loading
-            repository.getAnimeDetail(animeId)
+            repository.getAnimeDetail(
+                animeId,
+                mediaType
+            )
                 .onSuccess { anime ->
                     _uiState.value = DetailUiState.Success(anime)
                 }

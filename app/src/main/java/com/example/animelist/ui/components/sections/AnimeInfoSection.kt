@@ -84,13 +84,27 @@ fun AnimeInfoSection(
                 }
             }
 
-            val episodeOrStatusText = when {
-                animeItem.status == "NOT_YET_RELEASED" -> "放送予定"
-                animeItem.episodes != null -> "${animeItem.episodes}話"
-                animeItem.status == "RELEASING" -> "放送中"
-                animeItem.status == "CANCELLED" -> "制作中止"
-                animeItem.status == "HIATUS" -> "休止中"
-                else -> "話数未定"
+            val episodeOrStatusText = if (animeItem.mediaType == "MANGA") {
+                when {
+                    animeItem.volumes != null && animeItem.chapters != null ->
+                        "全${animeItem.volumes}巻・${animeItem.chapters}話"
+                    animeItem.volumes != null -> "全${animeItem.volumes}巻"
+                    animeItem.chapters != null -> "全${animeItem.chapters}話"
+                    animeItem.status == "FINISHED" -> "完結"
+                    animeItem.status == "NOT_YET_RELEASED" -> "発売予定"
+                    animeItem.status == "CANCELLED" -> "打ち切り"
+                    animeItem.status == "HIATUS" -> "休載中"
+                    else -> "連載中"
+                }
+            } else {
+                when {
+                    animeItem.status == "NOT_YET_RELEASED" -> "放送予定"
+                    animeItem.episodes != null -> "${animeItem.episodes}話"
+                    animeItem.status == "RELEASING" -> "放送中"
+                    animeItem.status == "CANCELLED" -> "制作中止"
+                    animeItem.status == "HIATUS" -> "休止中"
+                    else -> "話数未定"
+                }
             }
 
             Text(

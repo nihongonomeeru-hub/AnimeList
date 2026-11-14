@@ -19,8 +19,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,8 +39,10 @@ import com.example.animelist.ui.screens.main_screens.HomePage
 import com.example.animelist.ui.screens.main_screens.SearchScreen
 import com.example.animelist.view_model.HomePageViewModel
 import androidx.compose.runtime.rememberCoroutineScope
+import com.example.animelist.graphql.type.MediaType
 import com.example.animelist.ui.components.SectionDetail
 import com.example.animelist.ui.model.AnimeItem
+import com.example.animelist.ui.model.MediaDestination
 import com.example.animelist.view_model.FavoriteViewModel
 import com.example.animelist.view_model.SearchViewModel
 import kotlinx.coroutines.launch
@@ -55,12 +59,27 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
     val selectedAnime = viewModel.selectedAnime
+    val relatedStack = remember { mutableStateListOf<MediaDestination>() }
     var currentRoute by remember { mutableStateOf(BottomNavItem.Home.route) }
 
     var lastBackPressTime by remember { mutableLongStateOf(0L) }
 
     val selectedSection = viewModel.selectedSection
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(selectedAnime) {
+        if(selectedAnime == null) {
+            relatedStack.clear()
+        }
+    }
+
+    val handleDetailBack: () -> Unit = {
+        if(relatedStack.isNotEmpty()) {
+            relatedStack.removeAt(relatedStack.lastIndex)
+        } else {
+            viewModel.clearSelection()
+        }
+    }
 
     val handleToggleFavorite: (AnimeItem) -> Unit = { anime ->
         favoriteViewModel.toggleFavorite(anime) { isAdded ->
@@ -77,7 +96,7 @@ fun MainScreen(
 
     BackHandler{
         if(selectedAnime != null) {
-            viewModel.clearSelection()
+            handleDetailBack()
         } else if(viewModel.selectedSection != null) {
             viewModel.closeSection()
         } else {
@@ -210,9 +229,20 @@ fun MainScreen(
                     }
                 ) { anime ->
                     if (anime != null) {
+                        val activeDestination = relatedStack.lastOrNull()
+                            ?: MediaDestination(id = anime.id, type = MediaType.ANIME)
                         DetailScreen(
-                            animeId = anime.id,
-                            onBackClick = { viewModel.clearSelection() }
+                            animeId = activeDestination.id,
+                            mediaType = activeDestination.type,
+                            onBackClick = handleDetailBack,
+                            onRelatedMediaClick = { related ->
+                                relatedStack.add(
+                                    MediaDestination(
+                                        id = related.id,
+                                        type = related.mediaType
+                                    )
+                                )
+                            }
                         )
                     }
                 }

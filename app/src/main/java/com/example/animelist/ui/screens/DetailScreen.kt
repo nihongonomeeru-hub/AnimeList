@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,10 +32,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.animelist.graphql.type.MediaType
 import com.example.animelist.ui.components.sections.AnimeDetailHeaderSection
 import com.example.animelist.ui.components.sections.AnimeInfoSection
 import com.example.animelist.ui.components.sections.AnimeTrailerSection
 import com.example.animelist.ui.components.sections.CharactersCastSection
+import com.example.animelist.ui.components.sections.RelatedMediaSection
+import com.example.animelist.ui.model.RelatedMediaItem
 import com.example.animelist.view_model.CharacterCastViewModel
 import com.example.animelist.view_model.DetailViewModel
 import com.example.animelist.view_model.FavoriteViewModel
@@ -43,7 +47,9 @@ import com.example.animelist.view_model.uiState.DetailUiState
 @Composable
 fun DetailScreen(
     animeId: Int,
+    mediaType: MediaType = MediaType.ANIME,
     onBackClick: () -> Unit,
+    onRelatedMediaClick: (RelatedMediaItem) -> Unit = {},
     modifier: Modifier = Modifier,
     detailViewModel: DetailViewModel = viewModel(),
     characterCastViewModel: CharacterCastViewModel = viewModel(),
@@ -53,7 +59,9 @@ fun DetailScreen(
         )
     )
 ) {
-    val scrollState = rememberScrollState()
+    val scrollState = key(
+        animeId, mediaType
+    ) { rememberScrollState() }
     val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
     val castUiState by characterCastViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -74,11 +82,12 @@ fun DetailScreen(
             }
         }
         is DetailUiState.Error -> {
-            Box(
+            Column(
                 modifier = modifier
                     .fillMaxSize()
                     .background(Color(0xFF0F0F0F)),
-                contentAlignment = Alignment.Center
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = state.message, color = Color.Gray)
                 Button(
@@ -162,9 +171,19 @@ fun DetailScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                 )
+
+                if(state.anime.relatedMedia?.isNotEmpty() == true) {
+                    Spacer(modifier = Modifier.height(28.dp))
+
+                    RelatedMediaSection(
+                        items = state.anime.relatedMedia,
+                        modifier = Modifier.fillMaxWidth(),
+                        onRelatedMediaClick = onRelatedMediaClick
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }
-
-
 }

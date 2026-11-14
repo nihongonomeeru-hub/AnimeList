@@ -10,5 +10,9 @@ data class AnimeItem(
     val episodes: Int?,
     val year: Int?,
     val trailer: TrailerItem? = null,
-    val status: String? = null
+    val status: String? = null,
+    val relatedMedia: List<RelatedMediaItem>? = emptyList(),
+    val mediaType: String = "ANIME",
+    val chapters: Int? = null,
+    val volumes: Int? = null
 )

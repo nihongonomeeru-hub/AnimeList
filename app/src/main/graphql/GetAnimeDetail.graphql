@@ -1,6 +1,8 @@
-query GetAnimeDetail($animeId: Int!) {
-    Media(id: $animeId, type: ANIME) {
+query GetAnimeDetail($animeId: Int!, $mediaType: MediaType!) {
+    Media(id: $animeId, type: $mediaType) {
         id
+        type
+        status
         title {
             native
             romaji
@@ -10,11 +12,33 @@ query GetAnimeDetail($animeId: Int!) {
             large
             medium
         }
-        status
-        bannerImage
+        relations {
+            edges {
+                relationType(version: 2)
+                node {
+                    id
+                    type
+                    format
+                    volumes
+                    chapters
+                    title {
+                        native
+                        romaji
+                        english
+                    }
+                    coverImage {
+                        large
+                        medium
+                    }
+                    weightedScore
+                }
+            }
+        }
         description(asHtml: false)
         weightedScore
         episodes
+        volumes
+        chapters
         seasonYear
         genres
         trailer {
