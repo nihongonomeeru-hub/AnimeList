@@ -9,6 +9,11 @@ query GetAnimeList($year: Int, $isAdult: Boolean = false) {
             ...AnimeCardFields
         }
     }
+    upComingAnime: Page(page: 1, perPage: 50) {
+        media(type: ANIME, status: NOT_YET_RELEASED, sort: TRENDING_DESC, isAdult: $isAdult) {
+            ...AnimeCardFields
+        }
+    }
     this_year: Page(page: 1, perPage: 50) {
         media(type: ANIME, seasonYear: $year, sort: POPULARITY_DESC, isAdult: $isAdult) {
             ...AnimeCardFields
@@ -40,7 +45,6 @@ query GetAnimeList($year: Int, $isAdult: Boolean = false) {
             ...AnimeCardFields
         }
     }
-
 }
 
 

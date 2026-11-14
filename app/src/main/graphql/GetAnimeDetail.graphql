@@ -10,6 +10,7 @@ query GetAnimeDetail($animeId: Int!) {
             large
             medium
         }
+        status
         bannerImage
         description(asHtml: false)
         weightedScore

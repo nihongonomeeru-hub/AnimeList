@@ -68,47 +68,54 @@ private fun GetAnimeListQuery.Data.toAnimeSections(): List<AnimeSection> = listO
     ),
     AnimeSection(
         id = 3,
+        title = "放送予定",
+        items = upComingAnime?.media?.mapNotNull { it?.animeCardFields }.orEmpty().toAnimeItems(
+            defaultGenres = listOf("新作", "放送予定")
+        )
+    ),
+    AnimeSection(
+        id = 4,
         title = "今年のアニメ",
         items = this_year?.media?.mapNotNull { it?.animeCardFields }.orEmpty().toAnimeItems(
             defaultGenres = listOf("放送中", "最新作")
         )
     ),
     AnimeSection(
-        id = 4,
+        id = 5,
         title = "放送中のアニメ",
         items =airing?.media?.mapNotNull { it?.animeCardFields }.orEmpty().toAnimeItems(
             defaultGenres = listOf("放送中", "最新作")
         )
     ),
     AnimeSection(
-        id = 5,
+        id = 6,
         title = "今期のアニメ",
         items = season?.media?.mapNotNull { it?.animeCardFields }.orEmpty().toAnimeItems(
             defaultGenres = listOf("今期", "最新作")
         )
     ),
     AnimeSection(
-        id = 6,
+        id = 7,
         title = "おすすめ",
         items = recommendations?.media?.mapNotNull { it?.animeCardFields }.orEmpty().toAnimeItems(
-            defaultGenres = listOf("今期", "最新作")
+            defaultGenres = listOf("おすすめ", "注目")
         )
     ),
     AnimeSection(
-        id = 7,
-        title = "アクション特集",
+        id = 8,
+        title = "アクション",
         items = action?.media?.mapNotNull { it?.animeCardFields }.orEmpty().toAnimeItems(
             defaultGenres = listOf("バトル", "冒険", "少年")
         )
     ),
     AnimeSection(
-        id = 8,
+        id = 9,
         title = "コメディ",
         items = comedy?.media?.mapNotNull { it?.animeCardFields }.orEmpty().toAnimeItems(
             defaultGenres = listOf("コメディ")
         )
     )
-)
+).filter { it.items.isNotEmpty() }
 
 private fun List<AnimeCardFields>.toAnimeItems(
     defaultGenres: List<String> = listOf("アニメ")
@@ -130,6 +137,7 @@ private fun List<AnimeCardFields>.toAnimeItems(
         description = fields.description?.trim().orEmpty(),
         genres = fields.genres?.filterNotNull()?.takeIf { it.isNotEmpty() } ?: defaultGenres,
         episodes = fields.episodes,
-        year = fields.seasonYear
+        year = fields.seasonYear,
+        status = fields.status?.rawValue
     )
 }

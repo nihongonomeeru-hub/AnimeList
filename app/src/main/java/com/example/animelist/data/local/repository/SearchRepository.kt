@@ -92,7 +92,8 @@ class SearchRepositoryImpl(
             description = fields.description?.trim().orEmpty(),
             genres = fields.genres?.filterNotNull()?.takeIf { it.isNotEmpty() } ?: defaultGenres,
             episodes = fields.episodes,
-            year = fields.seasonYear
+            year = fields.seasonYear,
+            status = fields.status?.rawValue
         )
     }
 }

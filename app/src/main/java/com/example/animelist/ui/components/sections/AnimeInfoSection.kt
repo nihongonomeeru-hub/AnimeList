@@ -84,13 +84,17 @@ fun AnimeInfoSection(
                 }
             }
 
-            val episodesText = when {
+            val episodeOrStatusText = when {
+                animeItem.status == "NOT_YET_RELEASED" -> "放送予定"
                 animeItem.episodes != null -> "${animeItem.episodes}話"
-                else -> "放送中"
+                animeItem.status == "RELEASING" -> "放送中"
+                animeItem.status == "CANCELLED" -> "制作中止"
+                animeItem.status == "HIATUS" -> "休止中"
+                else -> "話数未定"
             }
 
             Text(
-                text = episodesText,
+                text = episodeOrStatusText,
                 color = Color.Gray,
                 fontSize = 13.sp
             )
