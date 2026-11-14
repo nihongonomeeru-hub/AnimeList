@@ -49,8 +49,12 @@ fun DetailScreen(
     animeId: Int,
     mediaType: MediaType = MediaType.ANIME,
     onBackClick: () -> Unit,
-    onRelatedMediaClick: (RelatedMediaItem) -> Unit = {},
     modifier: Modifier = Modifier,
+    onRelatedMediaClick: (RelatedMediaItem) -> Unit = {},
+    onCharacterClick: (Int) -> Unit = {},
+    onVoiceActorClick: (Int) -> Unit = {},
+    showCloseAll: Boolean = false,
+    onCloseAllClick: () -> Unit = {},
     detailViewModel: DetailViewModel = viewModel(),
     characterCastViewModel: CharacterCastViewModel = viewModel(),
     favViewModel: FavoriteViewModel = viewModel(
@@ -66,8 +70,10 @@ fun DetailScreen(
     val castUiState by characterCastViewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(animeId) {
-        detailViewModel.loadAnimeDetail(animeId)
-        characterCastViewModel.loadCharactersAndCast(animeId)
+        detailViewModel.loadAnimeDetail(animeId, mediaType)
+        if(mediaType == MediaType.ANIME) {
+            characterCastViewModel.loadCharactersAndCast(animeId)
+        }
     }
 
     when (val state = detailState) {
@@ -115,7 +121,10 @@ fun DetailScreen(
                     animeItem = state.anime,
                     onBackClick = onBackClick,
                     onToggleFavorite = { favViewModel.toggleFavorite(state.anime) },
-                    isFavorite = isFavorite
+                    isFavorite = isFavorite,
+                    showCloseAll = showCloseAll,
+                    onCloseAllClick = onCloseAllClick,
+                    mediaType = mediaType
                 )
                 AnimeInfoSection(
                     animeItem = state.anime,
@@ -169,7 +178,9 @@ fun DetailScreen(
                 CharactersCastSection(
                     castUiState = castUiState,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    onCharacterClick = onCharacterClick,
+                    onVoiceActorClick = onVoiceActorClick
                 )
 
                 if(state.anime.relatedMedia?.isNotEmpty() == true) {

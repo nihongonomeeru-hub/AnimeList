@@ -3,6 +3,7 @@ package com.example.animelist.ui.components.sections
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
@@ -29,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.animelist.R
+import com.example.animelist.graphql.type.MediaType
 import com.example.animelist.ui.model.AnimeItem
 
 private val TopScrimBrush =  Brush.verticalGradient(
@@ -53,7 +56,10 @@ fun AnimeDetailHeaderSection(
     isFavorite: Boolean,
     onBackClick: () -> Unit,
     onToggleFavorite: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showCloseAll: Boolean = false,
+    onCloseAllClick: () -> Unit = {},
+    mediaType: MediaType = MediaType.ANIME
 ) {
     Box(
         modifier = modifier
@@ -107,17 +113,41 @@ fun AnimeDetailHeaderSection(
                     )
                 }
             }
-            Surface(
-                shape = CircleShape,
-                color = Color.Black.copy(alpha = 0.5f),
-                modifier = Modifier.size(40.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.End
             ) {
-                IconButton(onClick = onToggleFavorite) {
-                    Icon(
-                        imageVector = if(isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                        contentDescription = stringResource(R.string.to_mylist),
-                        tint = if(isFavorite) Color.Red else Color.Gray
-                    )
+                if (showCloseAll) {
+                    Surface(
+                        shape = CircleShape,
+                        color = Color.Black.copy(alpha = 0.5f),
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        IconButton(onClick = onCloseAllClick) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "すべて閉じる",
+                                tint = Color.White
+                            )
+                        }
+                    }
+                }
+                if(mediaType == MediaType.ANIME) {
+                    Surface(
+                        shape = CircleShape,
+                        color = Color.Black.copy(alpha = 0.5f),
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        IconButton(onClick = onToggleFavorite) {
+                            Icon(
+                                imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                                contentDescription = stringResource(R.string.to_mylist),
+                                tint = if (isFavorite) Color.Red else Color.Gray
+                            )
+                        }
+                    }
                 }
             }
         }

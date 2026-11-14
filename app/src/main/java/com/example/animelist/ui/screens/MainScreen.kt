@@ -42,6 +42,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.example.animelist.graphql.type.MediaType
 import com.example.animelist.ui.components.SectionDetail
 import com.example.animelist.ui.model.AnimeItem
+import com.example.animelist.ui.model.DetailDestination
 import com.example.animelist.ui.model.MediaDestination
 import com.example.animelist.view_model.FavoriteViewModel
 import com.example.animelist.view_model.SearchViewModel
@@ -59,7 +60,7 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
     val selectedAnime = viewModel.selectedAnime
-    val relatedStack = remember { mutableStateListOf<MediaDestination>() }
+    val detailStack = remember { mutableStateListOf<DetailDestination>() }
     var currentRoute by remember { mutableStateOf(BottomNavItem.Home.route) }
 
     var lastBackPressTime by remember { mutableLongStateOf(0L) }
@@ -69,13 +70,13 @@ fun MainScreen(
 
     LaunchedEffect(selectedAnime) {
         if(selectedAnime == null) {
-            relatedStack.clear()
+            detailStack.clear()
         }
     }
 
     val handleDetailBack: () -> Unit = {
-        if(relatedStack.isNotEmpty()) {
-            relatedStack.removeAt(relatedStack.lastIndex)
+        if(detailStack.isNotEmpty()) {
+            detailStack.removeAt(detailStack.lastIndex)
         } else {
             viewModel.clearSelection()
         }
@@ -229,21 +230,57 @@ fun MainScreen(
                     }
                 ) { anime ->
                     if (anime != null) {
-                        val activeDestination = relatedStack.lastOrNull()
-                            ?: MediaDestination(id = anime.id, type = MediaType.ANIME)
-                        DetailScreen(
-                            animeId = activeDestination.id,
-                            mediaType = activeDestination.type,
-                            onBackClick = handleDetailBack,
-                            onRelatedMediaClick = { related ->
-                                relatedStack.add(
-                                    MediaDestination(
-                                        id = related.id,
-                                        type = related.mediaType
-                                    )
-                                )
-                            }
-                        )
+                        val activeDestination = detailStack.lastOrNull()
+                            ?: DetailDestination.Media(id = anime.id, type = MediaType.ANIME)
+                        val handleCloseAll: () -> Unit = {
+                            detailStack.clear()
+                            viewModel.clearSelection()
+                        }
+
+                        when(activeDestination) {
+                            is DetailDestination.Media -> DetailScreen(
+                                animeId = activeDestination.id,
+                                mediaType = activeDestination.type,
+                                onBackClick = handleDetailBack,
+                                onRelatedMediaClick = { related ->
+                                    detailStack.add(DetailDestination.Media(related.id, related.mediaType))
+                                },
+                                onCharacterClick = { characterId ->
+                                    detailStack.add(DetailDestination.Character(characterId))
+                                },
+                                onVoiceActorClick = { voiceActorId ->
+                                    detailStack.add(DetailDestination.Staff(voiceActorId))
+                                },
+                                onCloseAllClick = handleCloseAll,
+                                showCloseAll = detailStack.isNotEmpty()
+                            )
+
+                            is DetailDestination.Character -> CharacterDetailScreen(
+                                characterId = activeDestination.id,
+                                onBackClick = handleDetailBack,
+                                onVoiceActorClick = { staffId ->
+                                    detailStack.add(DetailDestination.Staff(staffId))
+                                },
+                                onMediaClick = { mediaId, mediaType ->
+                                    detailStack.add(DetailDestination.Media(mediaId, mediaType))
+                                },
+                                onCloseAllClick = handleCloseAll,
+                                showCloseAll = detailStack.isNotEmpty()
+                            )
+
+                            is DetailDestination.Staff -> StaffDetailScreen(
+                                staffId = activeDestination.id,
+                                onBackClick = handleDetailBack,
+                                onCharacterClick = { charId ->
+                                    detailStack.add(DetailDestination.Character(charId))
+                                },
+                                onMediaClick = { mediaId, mediaType ->
+                                    detailStack.add(DetailDestination.Media(mediaId, mediaType))
+                                },
+                                showCloseAll = detailStack.isNotEmpty(),
+                                onCloseAllClick = handleCloseAll
+                            )
+                        }
                     }
                 }
             }

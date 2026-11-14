@@ -26,7 +26,9 @@ import com.example.animelist.view_model.uiState.CharactersCastUiState
 @Composable
 fun CharactersCastSection(
     modifier: Modifier = Modifier,
-    castUiState: CharactersCastUiState
+    castUiState: CharactersCastUiState,
+    onCharacterClick: (Int) -> Unit = {},
+    onVoiceActorClick: (Int) -> Unit = {}
 ) {
     when(val state = castUiState) {
         is CharactersCastUiState.Success -> {
@@ -37,12 +39,10 @@ fun CharactersCastSection(
                 ) {
                     Text(
                         text = "キャスト・登場人物",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF8E8E93),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White,
                         modifier = Modifier.padding(16.dp)
                     )
-
-                    Spacer(modifier = Modifier.height(14.dp))
 
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -57,8 +57,8 @@ fun CharactersCastSection(
                                 characterImageUrl = item.characterImageUrl,
                                 actorName = item.voiceActorName,
                                 actorImageUrl = item.voiceActorImageUrl,
-                                onCharacterClick = { /* Действия при клике на персонажа */ },
-                                onActorClick = { /* Действия при клике на сейю */ }
+                                onCharacterClick = {  onCharacterClick(item.characterId) },
+                                onActorClick = { item.voiceActorId?.let(onVoiceActorClick) }
                             )
                         }
                     }
