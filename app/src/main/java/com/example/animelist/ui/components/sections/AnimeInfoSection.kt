@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,11 +25,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.animelist.ui.model.AnimeItem
 
+private val HtmlTagRegex = Regex("<[^>]*>")
+private val MultipleSpacesRegex = Regex("\\s{2,}")
+
 @Composable
 fun AnimeInfoSection(
     animeItem: AnimeItem,
     modifier: Modifier = Modifier
 ) {
+    val cleanDescription = remember(animeItem.description) {
+        animeItem.description
+            .replace(HtmlTagRegex, " ")
+            .replace("&quot;", "\"")
+            .replace("&#039;", "'")
+            .replace("&amp;", "&")
+            .replace(MultipleSpacesRegex, " ")
+            .trim()
+            .ifEmpty { "あらすじはありません" }
+    }
+
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
@@ -90,23 +105,22 @@ fun AnimeInfoSection(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "あらすじ",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
+        if(animeItem.description.isNotEmpty()) {
+            Text(
+                text = "あらすじ",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        val cleanDescription = animeItem.description
-            .replace(Regex("<.*?>"), " ")
-
-        Text(
-            text = cleanDescription,
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color(0xFFCCCCCC),
-            lineHeight = 22.sp
-        )
+            Text(
+                text = cleanDescription,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color(0xFFCCCCCC),
+                lineHeight = 22.sp
+            )
+        }
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -44,8 +45,7 @@ fun CharacterCastCard(
 ) {
     Surface(
         modifier = modifier
-            .width(130.dp)
-            .clip(RoundedCornerShape(22.dp)),
+            .width(130.dp),
         color = Color(0xFF1E2230),
         shape = RoundedCornerShape(22.dp),
         border = BorderStroke(1.dp, Color(0xFF333A4D))
@@ -87,6 +87,7 @@ fun CharacterCastCard(
             if (!actorName.isNullOrBlank()) {
                 Surface(
                     modifier = Modifier
+                        .defaultMinSize(minHeight = 40.dp)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(14.dp))
                         .clickable(onClick = onActorClick),
@@ -125,6 +126,7 @@ fun CharacterCastCard(
                             modifier = Modifier.weight(1f)
                         )
 
+                        Spacer(modifier = Modifier.width(4.dp))
 
                         Icon(
                             imageVector = Icons.Outlined.Mic,

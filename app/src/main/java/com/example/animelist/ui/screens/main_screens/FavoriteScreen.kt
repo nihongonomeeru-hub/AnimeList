@@ -1,10 +1,13 @@
 package com.example.animelist.ui.screens.main_screens
 
 import android.app.Application
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,8 +31,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,13 +58,13 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun FavoritesScreen(
+    onAnimeClick: (AnimeItem) -> Unit,
     modifier: Modifier= Modifier,
     favViewModel: FavoriteViewModel = viewModel(
         factory = FavoriteViewModel.provideFactory(
             LocalContext.current.applicationContext as Application
         )
     ),
-    onAnimeClick: (AnimeItem) -> Unit
 ) {
     val snackBarHost = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -72,7 +78,7 @@ fun FavoritesScreen(
                 .fillMaxSize()
                 .background(Color(0xFF0F0F0F))
                 .statusBarsPadding()
-                .padding(horizontal = 16.dp)
+                .padding(innerPadding)
         ) {
             Text(
                 text = stringResource(R.string.my_list),
@@ -146,67 +152,78 @@ fun FavoritesContent(
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = modifier.fillMaxSize()
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            modifier = modifier
+                .fillMaxSize()
         ) {
             items(
                 items = favorites,
                 key = {anime -> anime.id}
             ) { anime ->
-                val dismissState = rememberSwipeToDismissBoxState(
-                    confirmValueChange = { value ->
-                        if(value == SwipeToDismissBoxValue.EndToStart) {
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            onRemoveFavorite(anime)
-                            true
-                        } else {
-                            false
-                        }
-                    }
-                )
+                var resetTrigger by remember { mutableIntStateOf(0) }
 
-                SwipeToDismissBox(
-                    state = dismissState,
-                    enableDismissFromStartToEnd = false,
-                    enableDismissFromEndToStart = true,
-                    modifier = Modifier
-                        .animateItem()
-                        .clip(RoundedCornerShape(12.dp)),
-                    backgroundContent = {
-                        val progress = if(dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
+                key(anime.id, resetTrigger) {
+                    val dismissState = rememberSwipeToDismissBoxState(
+                        confirmValueChange = { value ->
+                            if (value == SwipeToDismissBoxValue.EndToStart) {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                resetTrigger++
+                                onRemoveFavorite(anime)
+                                true
+                            } else {
+                                false
+                            }
+                        }
+                    )
+                    SwipeToDismissBox(
+                        state = dismissState,
+                        enableDismissFromStartToEnd = false,
+                        enableDismissFromEndToStart = true,
+                        modifier = Modifier
+                            .animateItem(
+                                fadeInSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                                placementSpec = spring(
+                                    dampingRatio = Spring.DampingRatioLowBouncy,
+                                    stiffness = Spring.StiffnessMediumLow
+                                ),
+                                fadeOutSpec = spring(stiffness = Spring.StiffnessMedium)
+                            )
+                            .clip(RoundedCornerShape(12.dp))
+                            .clip(RoundedCornerShape(12.dp)),
+                        backgroundContent = {
+                            val progress = if(dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
                                 dismissState.progress
                             } else {
                                 0f
                             }
-
-                        val backgroundColor = androidx.compose.ui.graphics.lerp(
-                            start = Color(0xFF2C2C2E),
-                            stop = Color(0xFFE53935),
-                            fraction = (progress * 1.5f).coerceIn(0f, 1f)
-                        )
-
-                        val iconScale = 0.8f + (progress * 0.5f).coerceAtMost(0.5f)
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(backgroundColor)
-                                .padding(end = 24.dp),
-                            contentAlignment = Alignment.CenterEnd
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = "削除",
-                                tint = Color.White,
-                                modifier = Modifier.scale(iconScale)
+                            val backgroundColor = androidx.compose.ui.graphics.lerp(
+                                start = Color(0xFF2C2C2E),
+                                stop = Color(0xFFE53935),
+                                fraction = (progress * 1.5f).coerceIn(0f, 1f)
                             )
+                            val iconScale = 0.8f + (progress * 0.5f).coerceAtMost(0.5f)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(backgroundColor)
+                                    .padding(end = 24.dp),
+                                contentAlignment = Alignment.CenterEnd
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "削除",
+                                    tint = Color.White,
+                                    modifier = Modifier.scale(iconScale)
+                                )
+                            }
                         }
+                    ) {
+                        FavoriteListItem(
+                            anime = anime,
+                            onAnimeClick = onAnimeClick,
+                            onRemoveFavorite = onRemoveFavorite
+                        )
                     }
-                ) {
-                    FavoriteListItem(
-                        anime = anime,
-                        onAnimeClick = onAnimeClick,
-                        onRemoveFavorite = onRemoveFavorite
-                    )
                 }
             }
         }

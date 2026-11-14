@@ -1,6 +1,5 @@
 package com.example.animelist.ui.components.sections
 
-import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,34 +20,43 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.animelist.R
 import com.example.animelist.ui.model.AnimeItem
-import com.example.animelist.view_model.FavoriteViewModel
+
+private val TopScrimBrush =  Brush.verticalGradient(
+    colors = listOf(
+        Color(0x99000000),
+        Color.Transparent
+    )
+)
+
+private val BottomScrimBrush = Brush.verticalGradient(
+    colors = listOf(
+        Color.Transparent,
+        Color(0x660F0F0F),
+        Color(0xFF0F0F0F)
+    ),
+    startY = 100f
+)
 
 @Composable
 fun AnimeDetailHeaderSection(
     animeItem: AnimeItem,
+    isFavorite: Boolean,
     onBackClick: () -> Unit,
-    viewModel: FavoriteViewModel = viewModel(
-        factory = FavoriteViewModel.provideFactory(
-            LocalContext.current.applicationContext as Application
-        )
-    )
+    onToggleFavorite: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .aspectRatio(3f / 4f)
     ) {
@@ -62,15 +70,10 @@ fun AnimeDetailHeaderSection(
         )
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .height(100.dp)
                 .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0x99000000),
-                            Color.Transparent
-                        )
-                    )
+                    TopScrimBrush
                 )
         )
 
@@ -78,14 +81,7 @@ fun AnimeDetailHeaderSection(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Transparent,
-                            Color(0x660F0F0F),
-                            Color(0xFF0F0F0F)
-                        ),
-                        startY = 100f
-                    )
+                    BottomScrimBrush
                 )
         )
 
@@ -116,15 +112,7 @@ fun AnimeDetailHeaderSection(
                 color = Color.Black.copy(alpha = 0.5f),
                 modifier = Modifier.size(40.dp)
             ) {
-
-                val isFavorite by viewModel.isFavorite(animeItem)
-                    .collectAsStateWithLifecycle(initialValue = false)
-
-                IconButton(
-                    onClick = {
-                        viewModel.toggleFavorite(animeItem)
-                    }
-                ) {
+                IconButton(onClick = onToggleFavorite) {
                     Icon(
                         imageVector = if(isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                         contentDescription = stringResource(R.string.to_mylist),

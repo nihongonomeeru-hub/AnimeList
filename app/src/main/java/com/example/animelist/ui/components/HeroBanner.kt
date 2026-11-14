@@ -26,11 +26,32 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.animelist.R
 import com.example.animelist.ui.model.AnimeItem
+
+private val HeroTopScrimBrush = Brush.verticalGradient(
+    colors = listOf(
+        Color(0x99000000),
+        Color.Transparent
+    )
+)
+
+private val HeroBottomScrimBrush =
+    Brush.verticalGradient(
+        colors = listOf(
+            Color.Transparent,
+            Color.Transparent,
+            Color(0xCC0F0F0F),
+            Color(0xFF0F0F0F)
+        )
+    )
+
 
 @Composable
 fun HeroBanner(
@@ -38,43 +59,32 @@ fun HeroBanner(
     onDetailsClick: (AnimeItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    if(animeOfDay == null) return
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(510.dp)
+            .background(Color(0xFF1A1A1A))
     ) {
         AsyncImage(
-            model = animeOfDay?.imageUrl,
-            contentDescription = null,
+            model = animeOfDay.imageUrl,
+            contentDescription = animeOfDay.title,
             contentScale = ContentScale.Crop,
+            alignment = Alignment.TopCenter,
             modifier = Modifier.fillMaxSize()
         )
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .height(100.dp)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0x99000000),
-                            Color.Transparent
-                        )
-                    )
-                )
+                .align(Alignment.TopCenter)
+                .background(HeroTopScrimBrush)
         )
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color(0xCC0F0F0F),
-                            Color(0xFF0F0F0F)
-                        )
-                    )
-                )
+                .background(HeroBottomScrimBrush)
         )
 
         Column(
@@ -85,18 +95,18 @@ fun HeroBanner(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = animeOfDay?.title.orEmpty(),
+                text = animeOfDay.title,
                 color = Color.White,
                 fontSize = 26.sp,
+                lineHeight = 32.sp,
                 fontWeight = FontWeight.ExtraBold,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(bottom = 14.dp)
             )
                 OutlinedButton(
-                    onClick = {
-                        if (animeOfDay != null) {
-                            onDetailsClick(animeOfDay)
-                        }
-                    },
+                    onClick = { onDetailsClick(animeOfDay) },
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
                     modifier = Modifier

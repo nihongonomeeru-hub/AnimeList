@@ -34,28 +34,31 @@ fun CharactersCastSection(
                 Column(
                     modifier = modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp),
                 ) {
                     Text(
                         text = "キャスト・登場人物",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF8E8E93)
+                        color = Color(0xFF8E8E93),
+                        modifier = Modifier.padding(16.dp)
                     )
 
                     Spacer(modifier = Modifier.height(14.dp))
 
                     LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp)
                     ) {
-                        items(state.castList) { item ->
+                        items(
+                            items = state.castList,
+                            key = {item -> "${item.characterName}_${item.voiceActorName}"}
+                        ) { item ->
                             CharacterCastCard(
                                 characterName = item.characterName,
                                 characterImageUrl = item.characterImageUrl,
                                 actorName = item.voiceActorName,
                                 actorImageUrl = item.voiceActorImageUrl,
                                 onCharacterClick = { /* Действия при клике на персонажа */ },
-                                onActorClick = { /* Действия при клике на сейю */ },
-                                modifier = Modifier.width(135.dp)
+                                onActorClick = { /* Действия при клике на сейю */ }
                             )
                         }
                     }
@@ -67,20 +70,21 @@ fun CharactersCastSection(
         is CharactersCastUiState.Loading -> {
             Box(
                 modifier = modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .padding(vertical = 24.dp),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(color = Color.White)
             }
         }
         is CharactersCastUiState.Error -> {
-            Column(
-                modifier = modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp, vertical = 24.dp),
+                contentAlignment = Alignment.Center
             ) {
                 Text(text = state.message, color = Color.Gray)
-                Spacer(modifier = Modifier.height(12.dp))
             }
         }
     }

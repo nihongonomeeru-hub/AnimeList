@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.animelist.ui.model.TrailerItem
+import androidx.core.net.toUri
 
 @Composable
 fun AnimeTrailerSection(
@@ -68,9 +69,9 @@ fun AnimeTrailerSection(
                 .clickable {
                     val intent = Intent(
                         Intent.ACTION_VIEW,
-                        Uri.parse("https://www.youtube.com/watch?v=${trailer.id}")
+                        "https://www.youtube.com/watch?v=${trailer.id}".toUri()
                     )
-                    context.startActivity(intent)
+                    runCatching { context.startActivity(intent) }
                 },
             contentAlignment = Alignment.Center
         ) {

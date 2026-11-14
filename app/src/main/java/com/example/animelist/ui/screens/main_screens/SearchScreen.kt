@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,6 +47,7 @@ import com.example.animelist.view_model.SearchViewModel
 import com.example.animelist.view_model.uiState.SearchUIState
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 private val GENRE_LIST = listOf(
     "アクション" to "Action",
@@ -68,7 +70,7 @@ fun SearchScreen(
     searchView: SearchViewModel = viewModel()
 ) {
     val focusManager = LocalFocusManager.current
-    val queryText by searchView.searchQuery.collectAsState()
+    val queryText by searchView.searchQuery.collectAsStateWithLifecycle()
     val state = searchView.uiState
     val selectedGenre = searchView.selectedGenre
 
@@ -77,12 +79,12 @@ fun SearchScreen(
             .fillMaxSize()
             .background(Color(0xFF0F0F0F))
             .statusBarsPadding()
-            .padding(horizontal = 16.dp)
     ) {
         Text(
             text = stringResource(R.string.search),
             color = Color.White,
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -90,7 +92,9 @@ fun SearchScreen(
         OutlinedTextField(
             value = queryText,
             onValueChange = { query -> searchView.updateQuery(query) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             placeholder = {
                 Text(
                     text = "作品名、キーワードで検索",
@@ -132,7 +136,8 @@ fun SearchScreen(
         )
 
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
             items(GENRE_LIST) { (label, apiGenre) ->
                 val isSelected = apiGenre == selectedGenre
@@ -155,8 +160,7 @@ fun SearchScreen(
                 when (state) {
                     is SearchUIState.Loading -> {
                         Box(
-                            modifier = modifier
-                                .fillMaxSize(),
+                            modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(color = Color.White)
@@ -188,8 +192,9 @@ fun SearchScreen(
                     is SearchUIState.Success -> {
                         if (state.animeList.isEmpty()) {
                             Column(
+                                modifier = Modifier.fillMaxSize(),
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                                verticalArrangement = Arrangement.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Search,
@@ -236,8 +241,6 @@ fun SearchScreen(
                     }
                 }
             }
-
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 

@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.animelist.ui.model.AnimeItem
@@ -29,10 +30,11 @@ fun SectionDetail(
     section: AnimeSection,
     onBackClick: () -> Unit,
     onAnimeClick: (AnimeItem) -> Unit,
-    onLongClick: ((AnimeItem) -> Unit)? = null
+    modifier: Modifier = Modifier,
+    onLongClick: ((AnimeItem) -> Unit)? = null,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(Color(0xFF0F0F0F))
             .statusBarsPadding()
@@ -52,7 +54,12 @@ fun SectionDetail(
                 text = section.title,
                 color = Color.White,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp)
             )
         }
         AnimeGridContent(

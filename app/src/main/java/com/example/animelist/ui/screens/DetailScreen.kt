@@ -1,5 +1,6 @@
 package com.example.animelist.ui.screens
 
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,15 +37,21 @@ import com.example.animelist.ui.components.sections.AnimeTrailerSection
 import com.example.animelist.ui.components.sections.CharactersCastSection
 import com.example.animelist.view_model.CharacterCastViewModel
 import com.example.animelist.view_model.DetailViewModel
+import com.example.animelist.view_model.FavoriteViewModel
 import com.example.animelist.view_model.uiState.DetailUiState
 
 @Composable
 fun DetailScreen(
-    modifier: Modifier = Modifier,
     animeId: Int,
     onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
     detailViewModel: DetailViewModel = viewModel(),
-    characterCastViewModel: CharacterCastViewModel = viewModel()
+    characterCastViewModel: CharacterCastViewModel = viewModel(),
+    favViewModel: FavoriteViewModel = viewModel(
+        factory = FavoriteViewModel.provideFactory(
+            LocalContext.current.applicationContext as Application
+        )
+    )
 ) {
     val scrollState = rememberScrollState()
     val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
@@ -56,7 +65,9 @@ fun DetailScreen(
     when (val state = detailState) {
         is DetailUiState.Loading -> {
             Box(
-                modifier = modifier.fillMaxSize().background(Color(0xFF0F0F0F)),
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(Color(0xFF0F0F0F)),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(color = Color.White)
@@ -64,13 +75,27 @@ fun DetailScreen(
         }
         is DetailUiState.Error -> {
             Box(
-                modifier = modifier.fillMaxSize().background(Color(0xFF0F0F0F)),
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(Color(0xFF0F0F0F)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = state.message, color = Color.Gray)
+                Button(
+                    onClick = {
+                        detailViewModel.loadAnimeDetail(animeId)
+                        characterCastViewModel.loadCharactersAndCast(animeId)
+                    }
+                ) {
+                    Text(text = "再読み込み")
+                }
             }
         }
         is DetailUiState.Success -> {
+            val isFavorite by favViewModel
+                .isFavorite(state.anime)
+                .collectAsStateWithLifecycle(initialValue = false)
+
             Column(
                 modifier = modifier
                     .fillMaxSize()
@@ -79,7 +104,9 @@ fun DetailScreen(
             ) {
                 AnimeDetailHeaderSection(
                     animeItem = state.anime,
-                    onBackClick = onBackClick
+                    onBackClick = onBackClick,
+                    onToggleFavorite = { favViewModel.toggleFavorite(state.anime) },
+                    isFavorite = isFavorite
                 )
                 AnimeInfoSection(
                     animeItem = state.anime,
@@ -99,11 +126,10 @@ fun DetailScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(48.dp))
 
                 val genres = state.anime.genres
                 if(!genres.isNullOrEmpty()) {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(32.dp))
 
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),

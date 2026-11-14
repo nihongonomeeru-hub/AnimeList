@@ -6,27 +6,31 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.animelist.ui.navigation.BottomNavItem
 
+private val BottomNavItems = listOf(
+    BottomNavItem.Home,
+    BottomNavItem.Search,
+    BottomNavItem.Favorites
+)
+
 @Composable
 fun AppBottomBar(
+    modifier: Modifier = Modifier,
     currentRoute: String,
     onItemClick: (BottomNavItem) -> Unit
 ) {
-    val items = listOf(
-        BottomNavItem.Home,
-        BottomNavItem.Search,
-        BottomNavItem.Favorites
-    )
 
     NavigationBar(
+        modifier = modifier,
         containerColor = Color(0xFF0F0F0F),
         tonalElevation = 0.dp
     ) {
-        items.forEach { item ->
+        BottomNavItems.forEach { item ->
             val isSelected = currentRoute == item.route
             NavigationBarItem(
                 selected = isSelected,

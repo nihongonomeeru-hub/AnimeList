@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,6 +45,11 @@ fun HomePage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = state.message, color = Color.Gray)
+                Button(
+                    onClick = { viewModel.fetchHomeSections() }
+                ) {
+                    Text(text = "再読み込み")
+                }
                 Spacer(modifier = Modifier.height(12.dp))
             }
         }
@@ -51,6 +57,7 @@ fun HomePage(
         is HomeUIState.Success -> {
             val sections = state.animeList
             AnimeListContent(
+                modifier = modifier,
                 sections = sections,
                 onAnimeClick = { anime -> viewModel.selectedAnime(anime) },
                 onLongClick = onLongClick,

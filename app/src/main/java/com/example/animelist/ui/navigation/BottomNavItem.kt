@@ -10,7 +10,7 @@ import com.example.animelist.R
 
 sealed class BottomNavItem(
     val route: String,
-    @StringRes val title: Int,
+    @param:StringRes val title: Int,
     val icon: ImageVector
 ) {
     object Home: BottomNavItem("home", R.string.home, Icons.Default.Home)
