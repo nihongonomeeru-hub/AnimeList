@@ -9,6 +9,7 @@ query GetAnimeDetail($animeId: Int!, $mediaType: MediaType!) {
             english
         }
         coverImage {
+            extraLarge
             large
             medium
         }

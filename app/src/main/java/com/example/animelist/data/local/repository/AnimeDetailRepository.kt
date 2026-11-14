@@ -128,7 +128,7 @@ private fun GetAnimeDetailQuery.Media.toAnimeItem(
     return AnimeItem(
         id = id,
         title = titleName,
-        imageUrl = coverImage?.large ?: coverImage?.medium ?: "",
+        imageUrl = coverImage?.extraLarge ?: coverImage?.large ?: "",
         rating = parsedRating,
         description = description?.trim().orEmpty(),
         genres = genres?.filterNotNull()?.takeIf { it.isNotEmpty() } ?: defaultGenres,
