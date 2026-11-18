@@ -25,9 +25,6 @@ class HomePageViewModel(
 ): ViewModel() {
     var uiState: HomeUIState by mutableStateOf(HomeUIState.Loading)
         private set
-    var selectedAnime by mutableStateOf<AnimeItem?>(null)
-        private set
-
     var selectedSection by mutableStateOf<AnimeSection?>(null)
         private set
 
@@ -46,6 +43,11 @@ class HomePageViewModel(
     private var fetchJob: Job? = null
 
     private val rawStates = mutableMapOf<Int, LazyListState>()
+
+    fun getSectionById(id: Int?): AnimeSection? {
+        val currentState = uiState as? HomeUIState.Success ?: return null
+        return currentState.animeList.find { it.id == id }
+    }
 
     fun getRawState(sectionId: Int): LazyListState  {
         return rawStates.getOrPut(sectionId) { LazyListState() }
@@ -80,22 +82,6 @@ class HomePageViewModel(
                     uiState = HomeUIState.Error(message)
                 }
         }
-    }
-
-    fun selectedAnime(anime: AnimeItem) {
-        selectedAnime = anime
-    }
-
-    fun clearSelection() {
-        selectedAnime = null
-    }
-
-    fun openSection(section: AnimeSection) {
-        selectedSection = section
-    }
-
-    fun closeSection() {
-        selectedSection = null
     }
 
     private companion object {

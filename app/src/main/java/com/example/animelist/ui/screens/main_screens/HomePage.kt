@@ -15,9 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import com.example.animelist.ui.components.contents.AnimeListContent
 import com.example.animelist.ui.components.HeroBanner
 import com.example.animelist.ui.model.AnimeItem
+import com.example.animelist.ui.model.AnimeSection
+import com.example.animelist.ui.navigation.AnimeDetailRoute
 import com.example.animelist.view_model.HomePageViewModel
 import com.example.animelist.view_model.uiState.HomeUIState
 
@@ -25,7 +28,9 @@ import com.example.animelist.view_model.uiState.HomeUIState
 fun HomePage(
     modifier: Modifier = Modifier,
     viewModel: HomePageViewModel = viewModel(),
-    onLongClick: ((AnimeItem) -> Unit)? = null
+    onAnimeClick: (AnimeItem) -> Unit,
+    onSectionClick: (AnimeSection) -> Unit,
+    onLongClick: ((AnimeItem) -> Unit)? = null,
 ) {
     when(val state = viewModel.uiState) {
         is HomeUIState.Loading -> {
@@ -59,19 +64,19 @@ fun HomePage(
             AnimeListContent(
                 modifier = modifier,
                 sections = sections,
-                onAnimeClick = { anime -> viewModel.selectedAnime(anime) },
+                onAnimeClick = onAnimeClick,
                 onLongClick = onLongClick,
                 headerContent = {
                     viewModel.dailyRecommendation?.let { anime ->
                         HeroBanner(
                             animeOfDay = anime,
-                            onDetailsClick = { viewModel.selectedAnime(it) }
+                            onDetailsClick = { onAnimeClick(anime) }
                         )
                     }
                 },
                 listState = viewModel.listState,
                 getRawState = {sectionId -> viewModel.getRawState(sectionId)},
-                onSeeAllClick = { section -> viewModel.openSection(section) }
+                onSeeAllClick = onSectionClick
             )
         }
     }

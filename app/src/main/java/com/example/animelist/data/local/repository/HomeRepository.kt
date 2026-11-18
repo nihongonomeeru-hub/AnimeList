@@ -132,7 +132,7 @@ private fun List<AnimeCardFields>.toAnimeItems(
     AnimeItem(
         id = fields.id,
         title = titleName,
-        imageUrl = fields.coverImage?.large ?: fields.coverImage?.medium ?: "",
+        imageUrl = fields.coverImage?.extraLarge ?: fields.coverImage?.large ?: "",
         rating = parsedRating,
         description = fields.description?.trim().orEmpty(),
         genres = fields.genres?.filterNotNull()?.takeIf { it.isNotEmpty() } ?: defaultGenres,

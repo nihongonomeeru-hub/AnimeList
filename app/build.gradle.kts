@@ -69,7 +69,8 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("com.apollographql.apollo:apollo-runtime:5.2.0")
 
-
+    implementation("androidx.navigation:navigation-compose:2.8.5")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 }
 
 apollo {
