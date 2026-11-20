@@ -15,12 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.example.animelist.ui.components.contents.AnimeListContent
-import com.example.animelist.ui.components.HeroBanner
+import com.example.animelist.ui.components.contents.HeroBanner
 import com.example.animelist.ui.model.AnimeItem
 import com.example.animelist.ui.model.AnimeSection
-import com.example.animelist.ui.navigation.AnimeDetailRoute
 import com.example.animelist.view_model.HomePageViewModel
 import com.example.animelist.view_model.uiState.HomeUIState
 

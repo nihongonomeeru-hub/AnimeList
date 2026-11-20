@@ -27,7 +27,9 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,10 +51,10 @@ fun DetailScreen(
     animeId: Int,
     mediaType: MediaType = MediaType.ANIME,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
     onRelatedMediaClick: (RelatedMediaItem) -> Unit = {},
     onCharacterClick: (Int) -> Unit = {},
     onVoiceActorClick: (Int) -> Unit = {},
+    modifier: Modifier = Modifier,
     showCloseAll: Boolean = false,
     onCloseAllClick: () -> Unit = {},
     detailViewModel: DetailViewModel = viewModel(),
@@ -110,6 +112,7 @@ fun DetailScreen(
             val isFavorite by favViewModel
                 .isFavorite(state.anime)
                 .collectAsStateWithLifecycle(initialValue = false)
+            val haptic = LocalHapticFeedback.current
 
             Column(
                 modifier = modifier
@@ -120,7 +123,10 @@ fun DetailScreen(
                 AnimeDetailHeaderSection(
                     animeItem = state.anime,
                     onBackClick = onBackClick,
-                    onToggleFavorite = { favViewModel.toggleFavorite(state.anime) },
+                    onToggleFavorite = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        favViewModel.toggleFavorite(state.anime)
+                    },
                     isFavorite = isFavorite,
                     showCloseAll = showCloseAll,
                     onCloseAllClick = onCloseAllClick,

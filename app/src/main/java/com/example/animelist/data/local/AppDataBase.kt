@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.animelist.data.local.entity.AnimeEntity
 
-@Database(entities = [AnimeEntity::class], version = 2, exportSchema = false)
+@Database(entities = [AnimeEntity::class], version = 3, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun animeDao(): AnimeDao

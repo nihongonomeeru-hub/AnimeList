@@ -1,5 +1,6 @@
 package com.example.animelist.data.local.repository
 
+import com.apollographql.apollo.ApolloClient
 import com.example.animelist.data.local.AnimeDao
 import com.example.animelist.data.local.entity.toAnimeItem
 import com.example.animelist.data.local.entity.toEntity

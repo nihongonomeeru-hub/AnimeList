@@ -9,7 +9,10 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -24,7 +27,22 @@ import com.example.animelist.ui.screens.StaffDetailScreen
 import com.example.animelist.ui.screens.main_screens.FavoritesScreen
 import com.example.animelist.ui.screens.main_screens.HomePage
 import com.example.animelist.ui.screens.main_screens.SearchScreen
+import com.example.animelist.view_model.FavoriteViewModel
 import com.example.animelist.view_model.HomePageViewModel
+import com.example.animelist.view_model.SearchViewModel
+
+private val GENRE_LIST = listOf(
+    "アクション" to "Action",
+    "コメディ" to "Comedy",
+    "ドラマ" to "Drama",
+    "ファンタジー" to "Fantasy",
+    "日常" to "Slice of Life",
+    "ロマンス" to "Romance",
+    "SF" to "Sci-Fi",
+    "サスペンス" to "Mystery",
+    "ホラー" to "Horror",
+    "冒険" to "Adventure"
+)
 
 private fun NavHostController.isDeepInStack(): Boolean {
     val prev = previousBackStackEntry?.destination?: return false
@@ -37,9 +55,14 @@ private fun NavHostController.isDeepInStack(): Boolean {
 fun AppNavHost(
     navController: NavHostController,
     homeViewModel: HomePageViewModel,
+    searchView: SearchViewModel,
     onToggleFavourite: (AnimeItem) -> Unit,
+    favViewModel: FavoriteViewModel,
+    favorites: List<AnimeItem>,
+    selectedGenre: String?,
     modifier: Modifier = Modifier
 ) {
+    val focusManager = LocalFocusManager.current
     NavHost(
         navController = navController,
         startDestination = HomePageRoute,
@@ -57,16 +80,26 @@ fun AppNavHost(
 
         //Search Screen
         composable<SearchScreenRoute> {
+            val selectedGenre = searchView.selectedGenre
             SearchScreen(
                 onAnimeClick = { anime -> navController.navigate(AnimeDetailRoute(anime.id)) },
-                onLongClick = onToggleFavourite
+                onLongClick = onToggleFavourite,
+                genreList = GENRE_LIST,
+                selectedGenre = selectedGenre,
+                focusManager = focusManager,
+                searchView = searchView
             )
         }
 
         //Favorites Screen
         composable<FavouriteScreenRoute> {
             FavoritesScreen(
-                onAnimeClick = { anime -> navController.navigate(AnimeDetailRoute(anime.id)) }
+                onAnimeClick = { anime -> navController.navigate(AnimeDetailRoute(anime.id)) },
+                genreList = GENRE_LIST,
+                focusManager = focusManager,
+                favViewModel = favViewModel,
+                favorites = favorites,
+                selectedGenre = selectedGenre
             )
         }
 

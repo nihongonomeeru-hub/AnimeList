@@ -3,14 +3,6 @@ package com.example.animelist.ui.screens
 import android.app.Activity
 import android.app.Application
 import android.widget.Toast
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,9 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -28,29 +17,20 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.animelist.ui.components.AppBottomBar
 import com.example.animelist.ui.navigation.BottomNavItem
-import com.example.animelist.ui.screens.main_screens.FavoritesScreen
-import com.example.animelist.ui.screens.main_screens.HomePage
-import com.example.animelist.ui.screens.main_screens.SearchScreen
 import com.example.animelist.view_model.HomePageViewModel
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import com.example.animelist.graphql.type.MediaType
-import com.example.animelist.ui.components.SectionDetail
 import com.example.animelist.ui.model.AnimeItem
-import com.example.animelist.ui.navigation.AnimeDetailRoute
 import com.example.animelist.ui.navigation.AppNavHost
-import com.example.animelist.ui.navigation.CharacterDetailRoute
 import com.example.animelist.ui.navigation.FavouriteScreenRoute
 import com.example.animelist.ui.navigation.HomePageRoute
 import com.example.animelist.ui.navigation.SearchScreenRoute
-import com.example.animelist.ui.navigation.SectionDetailRoute
-import com.example.animelist.ui.navigation.StaffDetailRoute
 import com.example.animelist.view_model.FavoriteViewModel
 import com.example.animelist.view_model.SearchViewModel
 import kotlinx.coroutines.launch
@@ -65,13 +45,14 @@ fun MainScreen(
         )
     )
 ) {
+    val haptic = LocalHapticFeedback.current
     val context = LocalContext.current
     val navController = rememberNavController()
-
-    val selectedSection = homeViewModel.selectedSection
     val coroutineScope = rememberCoroutineScope()
-
+    val favorites by favoriteViewModel.favoritesCombine.collectAsStateWithLifecycle()
+    val selectedGenre by favoriteViewModel.selectedGenre.collectAsStateWithLifecycle()
     val handleToggleFavorite: (AnimeItem) -> Unit = { anime ->
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
         favoriteViewModel.toggleFavorite(anime) { isAdded ->
             val text = if (isAdded) {
                 "「${anime.title}」をお気に入りに追加しました"
@@ -143,7 +124,11 @@ fun MainScreen(
                 navController = navController,
                 homeViewModel = homeViewModel,
                 onToggleFavourite = handleToggleFavorite,
-                modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
+                modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
+                searchView = searchViewModel,
+                favViewModel = favoriteViewModel,
+                favorites = favorites,
+                selectedGenre = selectedGenre
             )
         }
     }

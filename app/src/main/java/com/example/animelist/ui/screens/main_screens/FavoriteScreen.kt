@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -40,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -48,27 +50,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.animelist.R
-import com.example.animelist.ui.components.FavoriteListItem
+import com.example.animelist.ui.components.GenreChip
+import com.example.animelist.ui.components.contents.FavoriteListItem
 import com.example.animelist.ui.model.AnimeItem
 import com.example.animelist.view_model.FavoriteViewModel
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun FavoritesScreen(
     onAnimeClick: (AnimeItem) -> Unit,
-    modifier: Modifier= Modifier,
-    favViewModel: FavoriteViewModel = viewModel(
-        factory = FavoriteViewModel.provideFactory(
-            LocalContext.current.applicationContext as Application
-        )
-    ),
+    modifier: Modifier = Modifier,
+    genreList: List<Pair<String, String>>,
+    focusManager: FocusManager,
+    favViewModel: FavoriteViewModel,
+    favorites: List<AnimeItem>,
+    selectedGenre: String? = null
 ) {
     val snackBarHost = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val favorites by favViewModel.favorites.collectAsStateWithLifecycle()
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHost) },
         containerColor = Color(0xFF0F0F0F)
@@ -87,6 +91,24 @@ fun FavoritesScreen(
                 color = Color.White,
                 modifier = Modifier.padding(vertical = 16.dp)
             )
+
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp)
+            ) {
+                items(genreList) { (label, apiGenre) ->
+                    val isSelected = apiGenre == selectedGenre
+
+                    GenreChip(
+                        label = label,
+                        isSelected = isSelected,
+                        onClick = {
+                            focusManager.clearFocus()
+                            favViewModel.toggleGenre(apiGenre)
+                        }
+                    )
+                }
+            }
 
             FavoritesContent(
                 favorites = favorites,

@@ -28,10 +28,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -45,34 +45,21 @@ import com.example.animelist.ui.components.contents.AnimeGridContent
 import com.example.animelist.ui.model.AnimeItem
 import com.example.animelist.view_model.SearchViewModel
 import com.example.animelist.view_model.uiState.SearchUIState
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-
-private val GENRE_LIST = listOf(
-    "アクション" to "Action",
-    "コメディ" to "Comedy",
-    "ドラマ" to "Drama",
-    "ファンタジー" to "Fantasy",
-    "日常" to "Slice of Life",
-    "ロマンス" to "Romance",
-    "SF" to "Sci-Fi",
-    "サスペンス" to "Mystery",
-    "ホラー" to "Horror",
-    "冒険" to "Adventure"
-)
+import com.example.animelist.ui.components.GenreChip
 
 @Composable
 fun SearchScreen(
     onAnimeClick: (AnimeItem) -> Unit,
     onLongClick: (AnimeItem) -> Unit,
     modifier: Modifier = Modifier,
-    searchView: SearchViewModel = viewModel()
+    genreList: List<Pair<String, String>>,
+    selectedGenre: String?,
+    focusManager: FocusManager,
+    searchView: SearchViewModel
 ) {
-    val focusManager = LocalFocusManager.current
     val queryText by searchView.searchQuery.collectAsStateWithLifecycle()
     val state = searchView.uiState
-    val selectedGenre = searchView.selectedGenre
 
     Column(
         modifier = modifier
@@ -139,7 +126,7 @@ fun SearchScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
-            items(GENRE_LIST) { (label, apiGenre) ->
+            items(genreList) { (label, apiGenre) ->
                 val isSelected = apiGenre == selectedGenre
 
                 GenreChip(
@@ -212,7 +199,7 @@ fun SearchScreen(
                             Column(modifier = Modifier.fillMaxSize()) {
                                 Spacer(modifier = Modifier.height(16.dp))
 
-                                val genreTitle = GENRE_LIST.find { it.second == selectedGenre }?.first
+                                val genreTitle = genreList.find { it.second == selectedGenre }?.first
                                     ?:if(queryText.isNotBlank()) "「$queryText」の検索結果" else "検索結果"
 
                                 Text(
@@ -242,40 +229,4 @@ fun SearchScreen(
                 }
             }
     }
-}
-
-@Composable
-private fun GenreChip(
-    modifier: Modifier = Modifier,
-    label: String,
-    onClick: () -> Unit,
-    isSelected: Boolean = false,
-) {
-    FilterChip(
-        selected = isSelected,
-        onClick = onClick,
-        label = {
-            Text(
-                text = label,
-                fontSize = 13.sp,
-                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-            )
-        },
-        shape = RoundedCornerShape(8.dp),
-        colors = FilterChipDefaults.filterChipColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer
-        ),
-        border = FilterChipDefaults.filterChipBorder(
-            enabled = true,
-            selected = isSelected,
-            borderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-            selectedBorderColor = MaterialTheme.colorScheme.primary,
-            borderWidth = 1.dp,
-            selectedBorderWidth = 1.5.dp
-        ),
-        modifier = modifier
-    )
 }
