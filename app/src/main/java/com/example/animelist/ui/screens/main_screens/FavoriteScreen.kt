@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -84,13 +85,26 @@ fun FavoritesScreen(
                 .statusBarsPadding()
                 .padding(innerPadding)
         ) {
-            Text(
-                text = stringResource(R.string.my_list),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                modifier = Modifier.padding(vertical = 16.dp)
-            )
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
+            ) {
+                val favoritesCount = favorites.size
+                val genreName = selectedGenre.toString()
+                Text(
+                    text = stringResource(R.string.my_list),
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
+                Text(
+                    text = if(selectedGenre == null) "${favoritesCount}作品" else "${favoritesCount }${genreName}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(0xFF8E8E93)
+                )
+            }
 
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),

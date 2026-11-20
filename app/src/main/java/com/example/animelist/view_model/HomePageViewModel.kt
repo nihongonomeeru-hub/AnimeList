@@ -65,8 +65,10 @@ class HomePageViewModel(
             val currentYear = Year.now().value
 
             repository.getHomeSections(currentYear)
-                .onSuccess { anime ->
-                    uiState = HomeUIState.Success(anime)
+                .onSuccess { sections ->
+                    uiState = HomeUIState.Success(sections)
+                    val uniqueSections = deduplicateSections(sections)
+                    uiState = HomeUIState.Success(uniqueSections)
                 }
                 .onFailure { throwable ->
                     val message = if(
@@ -86,6 +88,19 @@ class HomePageViewModel(
 
     private companion object {
         private const val RECOMMENDATION_SECTION_ID = 6
+    }
+}
+
+private fun deduplicateSections(sections: List<AnimeSection>): List<AnimeSection> {
+    val shownIds = mutableSetOf<Int>()
+
+    return sections.map { section ->
+        val uniqueItems = section.items.filter { anime ->
+            shownIds.add(anime.id)
+        }
+
+        val finalItems = if(uniqueItems.size >= 5) uniqueItems else section.items
+        section.copy(items = finalItems)
     }
 }
 

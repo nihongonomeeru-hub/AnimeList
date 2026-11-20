@@ -68,30 +68,30 @@ private fun GetAnimeListQuery.Data.toAnimeSections(): List<AnimeSection> = listO
     ),
     AnimeSection(
         id = 3,
-        title = "放送予定",
-        items = upComingAnime?.media?.mapNotNull { it?.animeCardFields }.orEmpty().toAnimeItems(
-            defaultGenres = listOf("新作", "放送予定")
-        )
-    ),
-    AnimeSection(
-        id = 4,
         title = "今年のアニメ",
         items = this_year?.media?.mapNotNull { it?.animeCardFields }.orEmpty().toAnimeItems(
             defaultGenres = listOf("放送中", "最新作")
         )
     ),
     AnimeSection(
-        id = 5,
+        id = 4,
         title = "放送中のアニメ",
         items =airing?.media?.mapNotNull { it?.animeCardFields }.orEmpty().toAnimeItems(
             defaultGenres = listOf("放送中", "最新作")
         )
     ),
     AnimeSection(
-        id = 6,
+        id = 5,
         title = "今期のアニメ",
         items = season?.media?.mapNotNull { it?.animeCardFields }.orEmpty().toAnimeItems(
-            defaultGenres = listOf("今期", "最新作")
+            defaultGenres = listOf("今期", "")
+        )
+    ),
+    AnimeSection(
+        id = 6,
+        title = "放送予定",
+        items = upComingAnime?.media?.mapNotNull { it?.animeCardFields }.orEmpty().toAnimeItems(
+            defaultGenres = listOf("新作", "放送予定")
         )
     ),
     AnimeSection(

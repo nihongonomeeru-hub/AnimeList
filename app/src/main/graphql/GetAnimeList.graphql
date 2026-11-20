@@ -20,7 +20,7 @@ query GetAnimeList($year: Int, $isAdult: Boolean = false) {
         }
     }
     airing: Page(page: 1, perPage: 50) {
-        media(type: ANIME, status: RELEASING, sort: POPULARITY_DESC, isAdult: $isAdult) {
+        media(type: ANIME, status: RELEASING, sort: UPDATED_AT_DESC, isAdult: $isAdult) {
             ...AnimeCardFields
         }
     }
