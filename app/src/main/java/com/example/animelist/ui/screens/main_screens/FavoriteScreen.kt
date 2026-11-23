@@ -100,7 +100,7 @@ fun FavoritesScreen(
                     modifier = Modifier.padding(vertical = 16.dp)
                 )
                 Text(
-                    text = if(selectedGenre == null) "${favoritesCount}作品" else "${favoritesCount }${genreName}",
+                    text = if(selectedGenre == null) "${favoritesCount}作品" else "$favoritesCount $genreName",
                     style = MaterialTheme.typography.bodySmall,
                     color = Color(0xFF8E8E93)
                 )
