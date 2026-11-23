@@ -46,10 +46,14 @@ AniList GraphQL API を活用し、最新のアニメトレンド情報の閲覧
 
 ## 🎬 Feature Demos (機能デモ)
 
-| Home & Transitions | Category Browsing | Instant Search | Favorites (Room DB) |
-| :---: | :---: | :---: | :---: |
-| ![Home Demo](art/app1.gif) | ![Category Demo](art/app2.gif) | ![Search Demo](art/app3.gif) | ![Favorites Demo](art/app4.gif) |
-| **ホーム・バナー遷移** | **カテゴリー一覧** | **インクリメンタル検索** | **マイリスト・DB永続化** |
+|      Home & Transitions      |        Category Browsing         |        Instant Search        |       Favorites (Room DB)       |
+|:----------------------------:|:--------------------------------:|:----------------------------:|:-------------------------------:|
+|  ![Home Demo](art/app1.gif)  |  ![Category Demo](art/app2.gif)  | ![Search Demo](art/app3.gif) | ![Favorites Demo](art/app4.gif) |
+|        **ホーム・バナー遷移**         |           **カテゴリー一覧**            |        **インクリメンタル検索**        |         **マイリスト・DB永続化**         |
+|    Character/cast Detail     |            Genre Chip            |
+|            :---:             |              :---:               |
+| ![Detail Demo](art/app6.gif) | ![Genre Chip Demo](art/app5.gif) |
+|         **キャラ・声優一覧**         |         **ジャンルチップ絞り込み**          |
 
 ---
 
